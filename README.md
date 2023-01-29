@@ -4,6 +4,8 @@ The goal of this project is to create a room manager designed to be used for a s
 
 This project is designed for individuals who need to navigate a complex building quickly and efficiently. With our room manager, users will be able to easily find and navigate to their desired room, making it a valuable tool for anyone who frequently visits or works in a large, complex building.
 
+This project not only allows users to easily navigate the building, but also provides a convenient way for users to view and manage their room reservations. Users will have the ability to add, delete and reschedule reservations, making it a comprehensive tool for managing room usage and availability within the building.
+
 # Features
 
 - Room scheduling and management
