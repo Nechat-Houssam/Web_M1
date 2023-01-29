@@ -21,8 +21,8 @@ The site will be called **RoomMate** for **Resourceful, Organized, On-demand, Om
 
 ## Logo sketch
 
-<img src="[https://github.com/favicon.ico](https://user-images.githubusercontent.com/83770758/215346074-6cafbc22-5bfd-4821-820c-cbf2a5a6ba77.png)" width="200">
-<img src="[ttps://user-images.githubusercontent.com/83770758/215346196-7f92cdb0-7566-4565-b2d1-ac799ce76198.png)" width="100">
+![RM txt deg](https://user-images.githubusercontent.com/83770758/215346502-ba99bb3c-6462-431a-ae2c-f5b7d0a04d87.png)
+![RM img deg](https://user-images.githubusercontent.com/83770758/215346505-9d812275-1dc6-49c3-80dd-c3328ec54e72.png)
 
 ## Main User View Sketch
 
