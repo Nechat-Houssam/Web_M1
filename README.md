@@ -6,7 +6,7 @@ This project is designed for individuals who need to navigate a complex building
 
 This project not only allows users to easily navigate the building, but also provides a convenient way for users to view and manage their room reservations. Users will have the ability to add, delete and reschedule reservations, making it a comprehensive tool for managing room usage and availability within the building.
 
-The site will be called **RoomMate** for Resourceful, Organized, On-demand, Omniscient Meeting management and the url could look like "www.room.edu" for educational purposes.
+The site will be called **RoomMate** for **Resourceful, Organized, On-demand, Omniscient Meeting management** and the url could look like **"www.room.edu"** for educational purposes.
 
 # Features
 
