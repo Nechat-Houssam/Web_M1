@@ -10,3 +10,17 @@ The goal of this project is to create a room manager designed to be used for a s
 - Export scheduling data to popular calendar formats
 - Customizable room settings and configurations
 - Easy to use, intuitive interface
+
+# Sketch
+
+## Logo sketch
+
+Insert image or description of the logo sketch here.
+
+## Main User View Sketch
+
+Insert image or description of the main user view sketch here.
+
+## Admin View Sketch
+
+Insert image or description of the admin view sketch here.
