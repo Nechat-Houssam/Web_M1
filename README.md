@@ -25,7 +25,7 @@ Insert image or description of the logo sketch here.
 
 ## Main User View Sketch
 
-![img-reservation](Vue Reservation.png)
+![img-reservation](/Users/theodorejordan/Documents/GitHub/Web_M1/vue-reservation.png)
 
 ## Admin View Sketch
 
