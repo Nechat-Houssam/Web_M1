@@ -27,6 +27,7 @@ The site will be called **RoomMate** for **Resourceful, Organized, On-demand, Om
 ## Main User View Sketch
 
 The idea is that you have a building (maybe more buildings in the future), and you can click on a floor to get the 2D representation of this floor. Then, you can click on a room to see the planning and maybe get a reservation !
+
 ![vue-building](https://user-images.githubusercontent.com/58405081/215345947-a50d2799-ea4c-428d-aa66-97955a0f8f4e.png)
 ![vue-building-with-reservation](https://user-images.githubusercontent.com/58405081/215345988-11f57e1d-8697-4251-a421-8f6725a131b7.png)
 ![vue-reservation-2](https://user-images.githubusercontent.com/58405081/215346015-6cf5e8bc-3c84-4256-a47d-8562753e70ba.png)
