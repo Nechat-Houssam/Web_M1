@@ -25,6 +25,8 @@ Insert image or description of the logo sketch here.
 
 ## Main User View Sketch
 
+![vue-building](https://user-images.githubusercontent.com/58405081/215345947-a50d2799-ea4c-428d-aa66-97955a0f8f4e.png)
+
 ![vue-reservation](https://user-images.githubusercontent.com/58405081/215345901-53cc14bd-069a-4e36-8ad0-11ad9e705e86.png)
 
 ## Admin View Sketch
