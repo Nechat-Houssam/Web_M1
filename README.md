@@ -25,7 +25,13 @@ Insert image or description of the logo sketch here.
 
 ## Main User View Sketch
 
-Insert image or description of the main user view sketch here.
+![New Wireframe 1 copy 2](/Users/theodorejordan/Documents/Dauphine/Web/PROJECT/maquette v1/New Wireframe 1 copy 2.png)
+
+![New Wireframe 1 copy 3](/Users/theodorejordan/Documents/Dauphine/Web/PROJECT/maquette v1/New Wireframe 1 copy 3.png)
+
+![New Wireframe 2 copy (1)](/Users/theodorejordan/Documents/Dauphine/Web/PROJECT/maquette v1/New Wireframe 2 copy (1).png)
+
+![New Wireframe 2](/Users/theodorejordan/Documents/Dauphine/Web/PROJECT/maquette v1/New Wireframe 2.png)
 
 ## Admin View Sketch
 
