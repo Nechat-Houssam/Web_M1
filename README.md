@@ -33,5 +33,6 @@ The site will be called **RoomMate** for **Resourceful, Organized, On-demand, Om
 
 ## Admin View Sketch
 
+For the admin view, its basically the same as the main user view,plus some views, that you can see here :
 ![editer](https://user-images.githubusercontent.com/114366098/215347567-ba7ba16a-1158-43a7-9abc-ba4740d77cd9.jpeg)
 ![delete](https://user-images.githubusercontent.com/114366098/215347561-6a4a21ca-ee75-40f7-a7b6-8e912dc88acd.jpeg)
