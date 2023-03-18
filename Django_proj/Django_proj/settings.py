@@ -54,7 +54,7 @@ ROOT_URLCONF = 'Django_proj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['C:/Users/necha/Documents/M1_web/Web_M1/Django_proj/First_App/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
