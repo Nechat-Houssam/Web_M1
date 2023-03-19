@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Paramètres</title>
+  <style>
+    body {
+      background-color: #fff;
+      color: #000;
+    }
+
+    .langue {
+      margin-bottom: 10px;
+    }
+
+    .couleur {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Paramètres</h1>
+  <form action="save_settings.php" method="post">
+    <fieldset class="langue">
+      <legend>Langue</legend>
+      <label>
+        <input type="radio" name="langue" value="français" checked> Français
+      </label>
+      <label>
+        <input type="radio" name="langue" value="anglais"> Anglais
+      </label>
+      <label>
+        <input type="radio" name="langue" value="espagnol"> Espagnol
+      </label>
+    </fieldset>
+
+    <fieldset class="couleur">
+      <legend>Couleur</legend>
+      <label>
+        <input type="radio" name="couleur" value="#fff" checked> Blanc
+      </label>
+      <label>
+        <input type="radio" name="couleur" value="#000"> Noir
+      </label>
+      <label>
+        <input type="radio" name="couleur" value="#f00"> Rouge
+      </label>
+      <label>
+        <input type="radio" name="couleur" value="#0f0"> Vert
+      </label>
+      <label>
+        <input type="radio" name="couleur" value="#00f"> Bleu
+      </label>
+    </fieldset>
+
+    <input type="submit" value="Enregistrer">
+  </form>
+</body>
+</html>
