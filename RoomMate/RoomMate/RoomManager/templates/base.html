@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}RoomMate{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'settings' %}">Settings</a></li>
+            <li><a href="{% url 'room_booking' %}">Room Booking</a></li>
+        </ul>
+    </nav>
+
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
