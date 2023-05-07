@@ -1,11 +1,15 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}RoomMate{% endblock %}</title>
+    <link href="{% static 'RoomManager/base.css' %}" rel="stylesheet">
 </head>
 <body>
     <nav>
+        <a href="{% url 'home' %}"><img src="../../static/RoomManager/RoomMate_textlogo.png"></a>
         <ul>
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'login' %}">Login</a></li>
@@ -13,10 +17,12 @@
             <li><a href="{% url 'room_booking' %}">Room Booking</a></li>
         </ul>
     </nav>
-
-    <div>
+    <div class="content">
         {% block content %}
         {% endblock %}
     </div>
+    <footer>
+        <a href="{% url 'home' %}"><img src="../../static/RoomManager/RoomMate_minilogo.png"></a>
+    </footer>
 </body>
 </html>
