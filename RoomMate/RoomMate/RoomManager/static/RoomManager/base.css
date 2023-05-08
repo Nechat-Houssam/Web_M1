@@ -1,20 +1,21 @@
 body {
-    background-color: #ffffff;
-    font-family: Verdana, Helvetica, Arial, sans-serif;
-    margin: 0%;
+    background-color: #f7f7f7;
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
   }
   
   nav {
-    background-color: #9d98ff;
+    background: linear-gradient(to right, #b5bdec, #5e72e4);
     display: flex;
+    justify-content: center;
     align-items: center;
     padding: 15px;
-    border-bottom: 3px solid #383efc;
+    height: 5vh;
   }
   
   nav img {
     height: 30px;
-    margin-right: 20px;
+    margin-left: 10px;
   }
   
   nav ul {
@@ -26,28 +27,34 @@ body {
   }
   
   nav li {
-    font-size: 20px;
-    font-style: italic;
-    margin: 5px 10px;
+    font-size: 22px;
+    margin: 5px 15px;
   }
-
+  
   nav a {
-    color: #3045dc;
+    color: #fff;
     text-decoration: none;
-    font-weight: bold;
+    font-weight: 600;
   }
-
+  
   .content {
-    display: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 92vh;
   }
-
+  
   footer {
-    padding: 25px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
+    background: linear-gradient(to right, #b5bdec, #5e72e4);
+    color: #fff;
   }
-
+  
   footer img {
-    height: 80px;
+    height: 60px;
   }
+  
