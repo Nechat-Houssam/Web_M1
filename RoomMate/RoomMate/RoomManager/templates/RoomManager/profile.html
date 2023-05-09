@@ -1,0 +1,30 @@
+{% extends 'RoomManager/base.html' %}
+
+{% block content %}
+    <style>
+        button {
+            background-color: #5e72e4;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #825ee4;
+        }
+    </style>
+    <h1>Welcome, {{ user.get_username }}</h1>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+    </form>
+    {% if user.is_superuser %}
+        <a href="{% url 'admin:index' %}">Admin Panel</a>
+    {% endif %}
+{% endblock %}
