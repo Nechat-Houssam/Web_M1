@@ -11,6 +11,9 @@
     <nav>
         <a href="{% url 'home' %}"><img src="../../static/RoomManager/RoomMate_textlogo.png"></a>
         <ul>
+            {% if user.is_superuser %}
+                <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
+            {% endif %}
             <li><a href="{% url 'home' %}">Home</a></li>
             <li><a href="{% url 'room_booking' %}">Booking</a></li>
             <li><a href="{% url 'settings' %}">Settings</a></li>

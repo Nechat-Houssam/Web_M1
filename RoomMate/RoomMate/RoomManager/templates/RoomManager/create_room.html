@@ -14,7 +14,6 @@
           background-color: #fff;
           border-radius: 20px;
           box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
-          margin: 20px;
         }
 
         h1 {
@@ -42,6 +41,7 @@
           font-size: 16px;
           font-weight: bold;
           margin-top: 5px;
+          margin-bottom: 10px;
           padding: 15px 20px;
           border-radius: 5px;
           transition: background-color 0.3s ease;
@@ -51,17 +51,15 @@
           background-color: #825ee4;
         }
     </style>
-    <h1>Welcome, {{ user.get_username }}</h1>
     {% if user.is_superuser %}
-        <form method="get" action="{% url 'create_room' %}">
-            <h1>Create new rooms</h1>
-            {% csrf_token %}
-            <button type="submit">Go to room creation</button>
-        </form>
-    {% endif %}
-    <form method="POST" action="{% url 'logout' %}">
-        <h1>It's a goodbye ?</h1>
+    <form method="POST" action="{% url 'create_room' %}">
         {% csrf_token %}
-        <button type="submit">Log out</button>
+        <h1>Create a new room</h1>
+        {{ room_form.as_p }}            
+        <button type="submit">Create</button>
+        <a href="{% url 'profile' %}">Return to profile</a>
     </form>
+    {% else %}
+    <h1>You don't have the rights.</h1>
+    {% endif %}
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.shortcuts import  render, redirect
-from .forms import NewUserForm
+from .forms import NewUserForm, RoomForm
+from .models import Room
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -7,7 +8,11 @@ from django.contrib import messages
 # Create your views here.
 
 def home(request):
-    return render(request, 'RoomManager/home.html')
+    rooms = Room.objects.all()
+    context = {
+        'rooms': rooms,
+    }
+    return render(request, 'RoomManager/home.html', context)
 
 def login_request(request):
 	if request.method == "POST":
@@ -42,7 +47,18 @@ def register_request(request):
 			return redirect("home")
 		messages.error(request, "Unsuccessful registration : invalid information")
 	form = NewUserForm()
-	return render (request=request, template_name="RoomManager/register.html", context={"register_form":form})
+	return render(request=request, template_name="RoomManager/register.html", context={"register_form":form})
+
+def create_room_request(request):
+	if request.method == "POST":
+		form = RoomForm(request.POST)
+		if form.is_valid():
+			room = form.save()
+			messages.success(request, "Room creation successful" )
+			return redirect("home")
+		messages.error(request, "Unsuccessful room creation : invalid information")
+	form = RoomForm()
+	return render(request=request, template_name="RoomManager/create_room.html", context={"room_form":form})
 
 def settings(request):
     return render(request, 'RoomManager/settings.html')

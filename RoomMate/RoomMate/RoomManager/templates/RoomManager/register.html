@@ -66,21 +66,21 @@
     }
   </style>
 	<form method="POST">
-        <h1>Welcome on RoomMate !</h1>
-		{% csrf_token %}
-		<div>
-            {{ register_form.username }}
-        </div>
-        <div>
-            {{ register_form.email }}
-        </div>
-        <div>
-            {{ register_form.password1 }}
-        </div>
-        <div>
-            {{ register_form.password2 }}
-        </div>                   
-		<button class="btn btn-primary" type="submit">Register</button>
+    <h1>Welcome on RoomMate !</h1>
+	    {% csrf_token %}
+	    <div>
+          {{ register_form.username }}
+      </div>
+      <div>
+          {{ register_form.email }}
+      </div>
+      <div>
+          {{ register_form.password1 }}
+      </div>
+      <div>
+          {{ register_form.password2 }}
+      </div> 
+		<button type="submit">Register</button>
 	</form>
 	<h2>If you already have an account, <a href="{% url 'login' %}">login</a> instead</h2>
 {% endblock %}
