@@ -2,44 +2,37 @@
 
 {% block content %}
     <style>
-        .room-grid {
+        .content {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            padding: 30px;
-        }
-
-        .room-card {
-            display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            height: 92vh;
         }
 
-        .room-card h2 {
-            font-size: 24px;
-            margin-top: 0;
+        h1 {
+            color: #5e72e4;
+            font-size: 28px;
+            margin: 50px;
+            text-align: center;
         }
 
-        .room-card p {
-            margin: 5px;
+        img {
+            height: 32px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        p {
+            margin: 50px;
         }
     </style>
-
-    <h1>Welcome to RoomMate</h1>
-
-    <div class="room-grid">
-        {% for room in rooms %}
-            <div class="room-card">
-                <h2>{{ room.name }}</h2>
-                <p><strong>Capacity :</strong> {{ room.capacity }}</p>
-                <p><strong>Wing :</strong> {{ room.get_wing_display }}</p>
-                <p><strong>Floor :</strong> {{ room.floor }}</p>
-                <p><strong>Number :</strong> {{ room.number }}</p>
-            </div>
-        {% endfor %}
-    </div>
+    <h1>Welcome to <img src="../../static/RoomManager/RoomMate_textlogo.png">, your new tool to find and book working rooms with your mates !</h1>
+    <h2>The idea</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium nesciunt earum enim architecto eius nostrum minima eaque. Placeat possimus quis nostrum ducimus totam neque dicta alias, molestias quisquam? Totam, voluptas!</p>
+    <h2>Book your room...</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium nesciunt earum enim architecto eius nostrum minima eaque. Placeat possimus quis nostrum ducimus totam neque dicta alias, molestias quisquam? Totam, voluptas!</p>
+    <h2>...and invite your mates</h2>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium nesciunt earum enim architecto eius nostrum minima eaque. Placeat possimus quis nostrum ducimus totam neque dicta alias, molestias quisquam? Totam, voluptas!</p>
 {% endblock %}

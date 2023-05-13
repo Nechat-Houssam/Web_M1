@@ -8,11 +8,7 @@ from django.contrib import messages
 # Create your views here.
 
 def home(request):
-    rooms = Room.objects.all()
-    context = {
-        'rooms': rooms,
-    }
-    return render(request, 'RoomManager/home.html', context)
+    return render(request, 'RoomManager/home.html')
 
 def login_request(request):
 	if request.method == "POST":
@@ -64,7 +60,11 @@ def settings(request):
     return render(request, 'RoomManager/settings.html')
 
 def room_booking(request):
-    return render(request, 'RoomManager/room_booking.html')
+    rooms = Room.objects.all()
+    context = {
+        'rooms': rooms,
+    }
+    return render(request, 'RoomManager/room_booking.html', context)
 
 def profile(request):
     return render(request, 'RoomManager/profile.html')
