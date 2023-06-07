@@ -1,6 +1,7 @@
+from django.http import JsonResponse
 from django.shortcuts import  render, redirect
-from .forms import NewUserForm, RoomForm
-from .models import Room
+from .forms import NewUserForm, RoomForm, EventForm
+from .models import Room, Event
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
@@ -68,3 +69,43 @@ def room_booking(request):
 
 def profile(request):
     return render(request, 'RoomManager/profile.html')
+
+def create_event(request):
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            event = form.save()  # Save the event object
+            event_data = {
+                'id': event.id,
+                'date': event.date.strftime('%Y-%m-%d'),
+                'start_time': event.start_time.strftime('%Y-%m-%dT%H:%M:%S'),
+                'end_time': event.end_time.strftime('%Y-%m-%dT%H:%M:%S'),
+                'room': {
+                    'id': event.room.id,
+                    'name': event.room.name,
+                    'capacity': event.room.capacity,
+                    'wing': event.room.get_wing_display(),
+                    'floor': event.room.floor,
+                    'number': event.room.number,
+                }
+            }
+            return JsonResponse({'event': event_data})
+        else:
+            return JsonResponse({'error': form.errors}, status=400)
+    else:
+        form = EventForm()
+    return render(request, 'RoomManager/room_booking.html', {'form': form, 'rooms': Room.objects.all()})
+
+
+def event_list(request):
+    events = Event.objects.all()
+    event_data = []
+
+    for event in events:
+        event_data.append({
+            'title': event.room.name,
+            'start': event.start_time.isoformat(),
+            'end': event.end_time.isoformat(),
+        })
+
+    return JsonResponse(event_data, safe=False)

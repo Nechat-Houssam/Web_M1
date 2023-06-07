@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-s%6!9_h20n8zwi!wf_qi2^xe(=1z!zz3y^nzm1qa5bmta-694b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['15.188.53.45','www.roommatesclass.com']
+ALLOWED_HOSTS = ['15.188.53.45','www.roommatesclass.com', '127.0.0.1']
 
 
 # Application definition
@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'RoomManager',
+    'RoomManager'
 ]
 
 MIDDLEWARE = [
@@ -62,7 +62,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                'django.contrib.messages.context_processors.messages'
             ],
         },
     },

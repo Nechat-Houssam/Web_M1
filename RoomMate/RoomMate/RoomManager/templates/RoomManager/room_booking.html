@@ -5,49 +5,134 @@
         .content {
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             height: 92vh;
         }
 
-        .room-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            padding: 30px;
+        .calendar-container {
+            flex: 1;
+            margin: 20px;
+        }
+
+        .right-container {
+            flex: 1;
+            margin-left: 20px;
         }
 
         .room-card {
             display: flex;
-            flex-direction: column;
+            font-size: 12px;
             align-items: center;
+            flex-direction: column;
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
             padding: 20px;
+            margin-top: 20px;
         }
 
-        .room-card h2 {
-            font-size: 24px;
-            margin-top: 0;
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
         }
 
-        .room-card p {
-            margin: 5px;
+        #calendar {
+            height: 500px;
         }
     </style>
 
-    <h1>Room Booking Page</h1>
-    <p>This is the room booking page.</p>
+    <div class="content">
+        <div class="calendar-container">
+            <div id="calendar"></div>
+        </div>
 
-    <div class="room-grid">
-        {% for room in rooms %}
-            <div class="room-card">
-                <h2>{{ room.name }}</h2>
-                <p><strong>Capacity :</strong> {{ room.capacity }}</p>
-                <p><strong>Wing :</strong> {{ room.get_wing_display }}</p>
-                <p><strong>Floor :</strong> {{ room.floor }}</p>
-                <p><strong>Number :</strong> {{ room.number }}</p>
+        <div class="right-container">
+            <div class="form-card">
+                <h2>Create Event</h2>
+                <form id="create-event-form" method="post" action="{% url 'create_event' %}">
+                    {% csrf_token %}
+                  
+                    <label for="id_date">Date:</label>
+                    <input type="date" id="id_date" name="date" value="{{ form.date.value|default_if_none:'' }}">
+                
+                    <label for="id_start_time">Start Time:</label>
+                    <input type="time" id="id_start_time" name="start_time" value="{{ form.start_time.value|default_if_none:'' }}">
+                
+                    <label for="id_end_time">End Time:</label>
+                    <input type="time" id="id_end_time" name="end_time" value="{{ form.end_time.value|default_if_none:'' }}">
+                
+                    <label for="id_room">Room:</label>
+                    <select id="id_room" name="room">
+                        {% for room in rooms %}
+                            <option value="{{ room.pk }}">{{ room.name }}</option>
+                        {% endfor %}
+                    </select>
+                
+                    <button type="submit">Create Event</button>
+                </form>
             </div>
-        {% endfor %}
+        
+            <div class="room-grid">
+                {% for room in rooms %}
+                    <div class="room-card">
+                        <p><strong>Name: </strong>{{ room.name }}</p>
+                        <p><strong>Capacity: </strong>{{ room.capacity }}</p>
+                        <p><strong>Wing: </strong>{{ room.get_wing_display }}</p>
+                        <p><strong>Floor: </strong>{{ room.floor }}</p>
+                        <p><strong>Number: </strong>{{ room.number }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+
+    <script>
+        $(document).ready(function() {
+            var calendar = $('#calendar').fullCalendar({
+                events: '{% url "event_list" %}'
+            });
+    
+            $('#create-event-form').submit(function(event) {
+                event.preventDefault();
+    
+                var form = $(this);
+                var url = form.attr('action');
+                var date = $('#id_date').val();
+                var startTime = $('#id_start_time').val();
+                var endTime = $('#id_end_time').val();
+                var room = $('#id_room').val();
+    
+                var data = {
+                    date: date,
+                    start_time: moment(date + ' ' + startTime, 'YYYY-MM-DD HH:mm').format('YYYY-MM-DDTHH:mm'),
+                    end_time: moment(date + ' ' + endTime, 'YYYY-MM-DD HH:mm').format('YYYY-MM-DDTHH:mm'),
+                    room: room
+                };
+
+                var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+    
+                $.ajax({
+                    type: 'POST',
+                    url: url,
+                    data: data,
+                    headers: {
+                        'X-CSRFToken': csrfToken
+                    },
+                    success: function(response) {
+                        calendar.fullCalendar('refetchEvents');
+                    },
+                    error: function(response) {
+                        console.log(':(');
+                        console.log(response);
+                    }
+                });
+            });
+        });
+    </script>    
 {% endblock %}
