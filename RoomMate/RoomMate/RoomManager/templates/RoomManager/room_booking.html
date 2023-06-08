@@ -52,6 +52,7 @@
                 <h2>Create Event</h2>
                 <form id="create-event-form" method="post" action="{% url 'create_event' %}">
                     {% csrf_token %}
+                    <input type="hidden" id="id_creator" name="creator" value="{{ request.user.id }}">
                   
                     <label for="id_date">Date:</label>
                     <input type="date" id="id_date" name="date" value="{{ form.date.value|default_if_none:'' }}">

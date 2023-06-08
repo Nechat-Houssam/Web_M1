@@ -1,12 +1,11 @@
-from django.http import JsonResponse
-from django.shortcuts import  render, redirect
 from .forms import NewUserForm, RoomForm, EventForm
 from .models import Room, Event
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-
-# Create your views here.
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, 'RoomManager/home.html')
@@ -70,12 +69,16 @@ def room_booking(request):
 def profile(request):
     return render(request, 'RoomManager/profile.html')
 
+@login_required
 def create_event(request):
     if request.method == 'POST':
         form = EventForm(request.POST)
         if form.is_valid():
-            event = form.save()  # Save the event object
+            event = form.save(commit=False)
+            event.creator = request.user
+            event.save()
             event_data = {
+                'creator_id': event.creator.id,
                 'id': event.id,
                 'date': event.date.strftime('%Y-%m-%d'),
                 'start_time': event.start_time.strftime('%Y-%m-%dT%H:%M:%S'),
@@ -91,11 +94,11 @@ def create_event(request):
             }
             return JsonResponse({'event': event_data})
         else:
+            print(form.errors)
             return JsonResponse({'error': form.errors}, status=400)
     else:
         form = EventForm()
     return render(request, 'RoomManager/room_booking.html', {'form': form, 'rooms': Room.objects.all()})
-
 
 def event_list(request):
     events = Event.objects.all()
@@ -109,3 +112,16 @@ def event_list(request):
         })
 
     return JsonResponse(event_data, safe=False)
+
+def delete_event(request, event_id):
+    # Fetch the event object
+    event = get_object_or_404(Event, id=event_id)
+
+    if request.method == 'DELETE':
+        # Delete the event
+        event.delete()
+        # Return a JSON response indicating success
+        return JsonResponse({'success': True})
+    else:
+        # Return a JSON response indicating failure
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
