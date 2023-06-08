@@ -4,19 +4,70 @@
     <style>
         .content {
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: flex-start;
-            height: 92vh;
+            align-items: stretch;
+        }
+
+        .top-container {
+            margin: 30px 80px;
         }
 
         .calendar-container {
-            flex: 1;
-            margin: 20px;
+            margin: 0px 80px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+            box-sizing: content-box;
         }
 
-        .right-container {
-            flex: 1;
-            margin-left: 20px;
+        .calendar-object {
+            margin: 10px 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-evenly;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+            width: auto;
+            height: 50px;
+        }
+
+        form select {
+            align-items: center;
+        }
+
+        h1 {
+            color: #5e72e4;
+            font-size: 28px;
+        }
+
+        input[type="time"], input[type="date"] {
+            border: 1px solid #5e72e4;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button[type="submit"] {
+            background-color: #5e72e4;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 15px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #825ee4;
         }
 
         .room-card {
@@ -43,48 +94,49 @@
     </style>
 
     <div class="content">
-        <div class="calendar-container">
-            <div id="calendar"></div>
-        </div>
-
-        <div class="right-container">
+        <div class="top-container">
             <div class="form-card">
-                <h2>Create Event</h2>
                 <form id="create-event-form" method="post" action="{% url 'create_event' %}">
                     {% csrf_token %}
-                    <input type="hidden" id="id_creator" name="creator" value="{{ request.user.id }}">
-                  
-                    <label for="id_date">Date:</label>
+                    <h1>Book a new room</h1>
+
                     <input type="date" id="id_date" name="date" value="{{ form.date.value|default_if_none:'' }}">
-                
-                    <label for="id_start_time">Start Time:</label>
-                    <input type="time" id="id_start_time" name="start_time" value="{{ form.start_time.value|default_if_none:'' }}">
-                
-                    <label for="id_end_time">End Time:</label>
-                    <input type="time" id="id_end_time" name="end_time" value="{{ form.end_time.value|default_if_none:'' }}">
-                
-                    <label for="id_room">Room:</label>
-                    <select id="id_room" name="room">
-                        {% for room in rooms %}
-                            <option value="{{ room.pk }}">{{ room.name }}</option>
-                        {% endfor %}
-                    </select>
-                
-                    <button type="submit">Create Event</button>
+                    
+                    <div class="time-choice">
+                        from
+                        <input type="time" id="id_start_time" name="start_time" value="{{ form.start_time.value|default_if_none:'' }}">
+                        to
+                        <input type="time" id="id_end_time" name="end_time" value="{{ form.end_time.value|default_if_none:'' }}">
+                    </div>
+                    
+                    <div class="room-choice">
+                        Room : 
+                        <select id="id_room" name="room">
+                            {% for room in rooms %}
+                                <option value="{{ room.pk }}">{{ room.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+        
+                    <button type="submit">Book my room</button>
                 </form>
             </div>
-        
-            <div class="room-grid">
-                {% for room in rooms %}
-                    <div class="room-card">
-                        <p><strong>Name: </strong>{{ room.name }}</p>
-                        <p><strong>Capacity: </strong>{{ room.capacity }}</p>
-                        <p><strong>Wing: </strong>{{ room.get_wing_display }}</p>
-                        <p><strong>Floor: </strong>{{ room.floor }}</p>
-                        <p><strong>Number: </strong>{{ room.number }}</p>
-                    </div>
-                {% endfor %}
-            </div>
+        </div>
+
+        <div class="calendar-container">
+            <div class="calendar-object" id="calendar"></div>
+        </div>
+
+        <div class="room-grid">
+            {% for room in rooms %}
+                <div class="room-card">
+                    <p><strong>Name: </strong>{{ room.name }}</p>
+                    <p><strong>Capacity: </strong>{{ room.capacity }}</p>
+                    <p><strong>Wing: </strong>{{ room.get_wing_display }}</p>
+                    <p><strong>Floor: </strong>{{ room.floor }}</p>
+                    <p><strong>Number: </strong>{{ room.number }}</p>
+                </div>
+            {% endfor %}
         </div>
     </div>
 
@@ -96,7 +148,10 @@
     <script>
         $(document).ready(function() {
             var calendar = $('#calendar').fullCalendar({
-                events: '{% url "event_list" %}'
+                events: '{% url "event_list" %}',
+                eventColor: '#5e72e4',
+                eventDisplay: 'list-item',
+                height: 500,
             });
     
             $('#create-event-form').submit(function(event) {

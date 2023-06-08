@@ -2,6 +2,13 @@
 
 {% block content %}
     <style>
+        .content {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 92vh;
+        }
+        
         body {
           background-color: #f7f7f7;
         }
@@ -19,16 +26,14 @@
         h1 {
           color: #5e72e4;
           font-size: 28px;
-          margin-bottom: 25px;
           text-align: center;
         }
 
-        input[type="text"], input[type="password"] {
+        input[type="text"] {
             border: 1px solid #5e72e4;
             border-radius: 5px;
             font-size: 16px;
             padding: 15px 20px;
-            margin-bottom: 20px;
             width: 100%;
             box-sizing: border-box;
         }
@@ -52,13 +57,13 @@
         }
     </style>
     {% if user.is_superuser %}
-    <form method="POST" action="{% url 'create_room' %}">
-        {% csrf_token %}
-        <h1>Create a new room</h1>
-        {{ room_form.as_p }}            
-        <button type="submit">Create</button>
-        <a href="{% url 'profile' %}">Return to profile</a>
-    </form>
+      <form method="POST" action="{% url 'create_room' %}">
+          {% csrf_token %}
+          <h1>Create a new room</h1>
+          {{ room_form.as_p }}            
+          <button type="submit">Create</button>
+          <a href="{% url 'profile' %}">Return to profile</a>
+      </form>
     {% else %}
     <h1>You don't have the rights.</h1>
     {% endif %}
