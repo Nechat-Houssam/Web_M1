@@ -10,10 +10,10 @@ class Room(models.Model):
         ('A', 'Auteuil'),
     ]
     name = models.CharField(max_length=50)
-    capacity = models.IntegerField(max_length=2)
+    capacity = models.IntegerField()
     wing = models.CharField(max_length=1, choices=WINGS)
-    floor = models.IntegerField(max_length=1)
-    number = models.IntegerField(max_length=2)
+    floor = models.IntegerField()
+    number = models.IntegerField()
 
     def __str__(self):
         return self.name

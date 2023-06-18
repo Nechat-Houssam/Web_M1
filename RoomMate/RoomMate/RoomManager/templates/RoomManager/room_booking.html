@@ -1,194 +1,167 @@
 {% extends 'RoomManager/base.html' %}
 
-{% block content %}
+{% block content %} 
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Room Booking</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css" media="print" />
     <style>
-        .content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: stretch;
+        /* Styles pour le conteneur du calendrier */
+        #calendar-container {
+            width: 100%;
+            height: 70vh; /* Ajustez la valeur selon vos besoins */
+            overflow: auto; /* Ajoutez une barre de défilement si nécessaire */
         }
-
-        .top-container {
-            margin: 30px 80px;
-        }
-
-        .calendar-container {
-            margin: 0px 80px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 20px;
-            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
-            box-sizing: content-box;
-        }
-
-        .calendar-object {
-            margin: 10px 20px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-            align-items: center;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 20px;
-            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
-            width: auto;
-            height: 50px;
-        }
-
-        form select {
-            align-items: center;
-        }
-
-        h1 {
-            color: #5e72e4;
-            font-size: 28px;
-        }
-
-        input[type="time"], input[type="date"] {
-            border: 1px solid #5e72e4;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        button[type="submit"] {
-            background-color: #5e72e4;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 15px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #825ee4;
-        }
-
-        .room-card {
-            display: flex;
-            font-size: 12px;
-            align-items: center;
-            flex-direction: column;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .room-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
+    
         #calendar {
-            height: 500px;
+            width: 100%;
+            height: 100%;
         }
     </style>
+</head>
+<body>
+    <h1>Room Booking</h1>
 
-    <div class="content">
-        <div class="top-container">
-            <div class="form-card">
-                <form id="create-event-form" method="post" action="{% url 'create_event' %}">
-                    {% csrf_token %}
-                    <h1>Book a new room</h1>
 
-                    <input type="date" id="id_date" name="date" value="{{ form.date.value|default_if_none:'' }}">
-                    
-                    <div class="time-choice">
-                        from
-                        <input type="time" id="id_start_time" name="start_time" value="{{ form.start_time.value|default_if_none:'' }}">
-                        to
-                        <input type="time" id="id_end_time" name="end_time" value="{{ form.end_time.value|default_if_none:'' }}">
-                    </div>
-                    
-                    <div class="room-choice">
-                        Room : 
-                        <select id="id_room" name="room">
-                            {% for room in rooms %}
-                                <option value="{{ room.pk }}">{{ room.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-        
-                    <button type="submit">Book my room</button>
-                </form>
-            </div>
-        </div>
 
-        <div class="calendar-container">
-            <div class="calendar-object" id="calendar"></div>
-        </div>
-
-        <div class="room-grid">
+    <form id="roomForm">
+        {% csrf_token %}
+        <label for="room">Choose a room:</label>
+        <select name="room" id="room">
             {% for room in rooms %}
-                <div class="room-card">
-                    <p><strong>Name: </strong>{{ room.name }}</p>
-                    <p><strong>Capacity: </strong>{{ room.capacity }}</p>
-                    <p><strong>Wing: </strong>{{ room.get_wing_display }}</p>
-                    <p><strong>Floor: </strong>{{ room.floor }}</p>
-                    <p><strong>Number: </strong>{{ room.number }}</p>
-                </div>
+                <option value="{{ room.id }}">{{ room.name }}</option>
             {% endfor %}
-        </div>
-    </div>
+        </select>
+    </form>
 
+
+
+
+<div id="calendar-container">
+    <div id="calendar"></div>
+</div>
+    <!-- Inclure les fichiers JavaScript de FullCalendar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
 
     <script>
-        $(document).ready(function() {
-            var calendar = $('#calendar').fullCalendar({
-                events: '{% url "event_list" %}',
-                eventColor: '#5e72e4',
-                eventDisplay: 'list-item',
-                height: 500,
-            });
-    
-            $('#create-event-form').submit(function(event) {
-                event.preventDefault();
-    
-                var form = $(this);
-                var url = form.attr('action');
-                var date = $('#id_date').val();
-                var startTime = $('#id_start_time').val();
-                var endTime = $('#id_end_time').val();
-                var room = $('#id_room').val();
-    
-                var data = {
-                    date: date,
-                    start_time: moment(date + ' ' + startTime, 'YYYY-MM-DD HH:mm').format('YYYY-MM-DDTHH:mm'),
-                    end_time: moment(date + ' ' + endTime, 'YYYY-MM-DD HH:mm').format('YYYY-MM-DDTHH:mm'),
-                    room: room
-                };
+        var calendar;
 
-                var csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
-    
+        $(document).ready(function() {
+            $('#room').on('change', function() {
+                var selectedRoom = $(this).val();
+                fetchEvents(selectedRoom);
+            });
+
+
+            function fetchEvents(roomId) {
                 $.ajax({
-                    type: 'POST',
-                    url: url,
-                    data: data,
-                    headers: {
-                        'X-CSRFToken': csrfToken
+                    url: '{% url "fetch_events" %}',
+                    type: 'GET',
+                    data: {
+                        room_id: roomId
                     },
                     success: function(response) {
-                        calendar.fullCalendar('refetchEvents');
+                        renderCalendar(response.events);
                     },
-                    error: function(response) {
-                        console.log(':(');
-                        console.log(response);
+                    error: function(xhr, status, error) {
+                        console.error(error);
                     }
                 });
-            });
+            }
+
+            function renderCalendar(events) {
+                if (calendar) {
+                    calendar.fullCalendar('destroy');
+                }
+
+                calendar = $('#calendar').fullCalendar({
+                    header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                    },
+                    defaultView: 'agendaWeek',
+                    scrollTime: null,
+                    height: 'auto', 
+                    contentHeight: 'auto',
+                    events: events,
+                    eventRender: function(event, element) {
+                        element.attr('title', event.title);
+                    },
+                    minTime: '08:00:00', // Heure de début
+                    maxTime: '18:00:00',  // Heure de fin
+
+                    dayClick: function(date, jsEvent, view) {
+                        var day = date.format('YYYY-MM-DD');
+                        var start = date.format('HH:mm');
+                        var end = date.clone().add(30, 'minutes').format('HH:mm');
+                        var room = $('#room option:selected').text(); // Récupérer le nom de la salle sélectionnée
+                        var confirmation = confirm("Voulez-vous réserver la salle " + room + " le " + day + " de " + start + " à " + end + " ?");
+                        var csrf_token = getCookie('csrf_token')
+                        
+                        
+                        
+                        if (confirmation) {
+                            var startDateTime = new Date(date.format('YYYY-MM-DD') + 'T' + date.format('HH:mm') + ':00');
+                            var endDateTime = new Date(date.clone().add(30, 'minutes').format('YYYY-MM-DD') + 'T' + date.clone().add(30, 'minutes').format('HH:mm') + ':00');
+                            console.log(startDateTime);
+                            console.log(endDateTime);
+                            $.ajax({
+                                url: '{% url "create_event" %}',
+                                type: 'POST',
+                                data: {
+                                    room: room,
+                                    date: day,
+                                    start_time: startDateTime.toISOString(),
+                                    end_time: endDateTime.toISOString(),
+                                    'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+                                },
+                                success: function(response) {
+                                    console.log("Événement crééeeee avec succès !");
+                                    console.log(day + start + end);
+                                    $('#calendar').fullCalendar('refetchEvents');
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error("Une erreur s'est produite lors de la création de l'événement :", error);
+                                }
+                            });
+
+
+                        } else {
+                            console.log("Réservation annulée.");
+                        }
+                    }
+                });
+            }
+
+
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = cookies[i].trim();
+                        // Rechercher le cookie qui correspond au nom donné
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            // Sélectionner la première salle par défaut
+            var defaultRoomId = $('#room option:first').val();
+            fetchEvents(defaultRoomId);
         });
-    </script>    
+    </script>
+</body>
+</html>
 {% endblock %}

@@ -6,9 +6,14 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from datetime import datetime, time, timedelta
+from django.utils import timezone
+import pytz
 
 def home(request):
-    return render(request, 'RoomManager/home.html')
+    rooms = Room.objects.all()
+    return render(request, 'RoomManager/home.html', {'rooms': rooms})
 
 def login_request(request):
 	if request.method == "POST":
@@ -45,6 +50,7 @@ def register_request(request):
 	form = NewUserForm()
 	return render(request=request, template_name="RoomManager/register.html", context={"register_form":form})
 
+
 def create_room_request(request):
 	if request.method == "POST":
 		form = RoomForm(request.POST)
@@ -59,59 +65,44 @@ def create_room_request(request):
 def settings(request):
     return render(request, 'RoomManager/settings.html')
 
-def room_booking(request):
-    rooms = Room.objects.all()
-    context = {
-        'rooms': rooms,
-    }
-    return render(request, 'RoomManager/room_booking.html', context)
-
 def profile(request):
     return render(request, 'RoomManager/profile.html')
 
-@login_required
+
+
 def create_event(request):
     if request.method == 'POST':
-        form = EventForm(request.POST)
-        if form.is_valid():
-            event = form.save(commit=False)
-            event.creator = request.user
-            event.save()
-            event_data = {
-                'creator_id': event.creator.id,
-                'id': event.id,
-                'date': event.date.strftime('%Y-%m-%d'),
-                'start_time': event.start_time.strftime('%Y-%m-%dT%H:%M:%S'),
-                'end_time': event.end_time.strftime('%Y-%m-%dT%H:%M:%S'),
-                'room': {
-                    'id': event.room.id,
-                    'name': event.room.name,
-                    'capacity': event.room.capacity,
-                    'wing': event.room.get_wing_display(),
-                    'floor': event.room.floor,
-                    'number': event.room.number,
-                }
-            }
-            return JsonResponse({'event': event_data})
-        else:
-            print(form.errors)
-            return JsonResponse({'error': form.errors}, status=400)
+        room_name = request.POST.get('room')
+        day = request.POST.get('date')
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+
+        st = datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+        et = datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+        # Ajout de 2 heures à l'objet datetime
+        new_st = st + timedelta(hours=2)
+        new_et = et + timedelta(hours=2)
+        print(new_st)
+        print(new_et)
+        
+        room = get_object_or_404(Room, name=room_name)
+
+        event = Event(
+            creator=request.user, 
+            room=room,
+            date=day,
+            start_time=new_st,
+            end_time=new_et
+        )
+
+        event.save()
+        response_data = {
+            'message': 'Événement créé avec succès',
+        }
+        return JsonResponse(response_data)
     else:
-        form = EventForm()
-    return render(request, 'RoomManager/room_booking.html', {'form': form, 'rooms': Room.objects.all()})
+        pass
 
-def event_list(request):
-    events = Event.objects.all()
-    event_data = []
-
-    for event in events:
-        event_data.append({
-            'title': event.room.name,
-            'start': event.start_time.isoformat(),
-            'end': event.end_time.isoformat(),
-        })
-
-    return JsonResponse(event_data, safe=False)
 
 def delete_event(request, event_id):
     # Fetch the event object
@@ -125,3 +116,30 @@ def delete_event(request, event_id):
     else:
         # Return a JSON response indicating failure
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+def room_booking(request):
+    rooms = Room.objects.all()
+
+    if request.method == 'POST':
+        room_id = request.POST.get('room')
+        room = get_object_or_404(Room, id=room_id)
+        events = Event.objects.filter(room=room)
+        return render(request, 'RoomManager/room_booking.html', {'rooms': rooms, 'events': events})
+
+    return render(request, 'RoomManager/room_booking.html', {'rooms': rooms})
+
+
+def fetch_events(request):
+    room_id = request.GET.get('room_id')
+    room = Room.objects.get(id=room_id)
+    events = Event.objects.filter(room=room)
+
+    event_data = []
+    for event in events:
+        event_data.append({
+            'start': event.start_time.isoformat(),
+            'end': event.end_time.isoformat(),
+        })
+
+    return JsonResponse({'events': event_data})
