@@ -9,7 +9,7 @@
 </head>
 <body>
     <nav>
-        <a href="{% url 'home' %}"><img src="../../static/RoomManager/RoomMate_textlogo.png"></a>
+        <a href="{% url 'home' %}"><img src="{% static 'RoomManager/RoomMate_textlogo.png' %}"></a>
         <ul>
             {% if user.is_superuser %}
                 <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
@@ -38,7 +38,7 @@
         {% endblock %}
     </div>
     <footer>
-        <a href="{% url 'home' %}"><img src="../../static/RoomManager/RoomMate_minilogo.png"></a>
+        <a href="{% url 'home' %}"><img src="{% static 'RoomManager/RoomMate_minilogo.png' %}"></a>
     </footer>
 </body>
 </html>

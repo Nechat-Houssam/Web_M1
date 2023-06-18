@@ -1,12 +1,17 @@
 {% extends 'RoomManager/base.html' %}
 
 {% block content %}
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css" media="print" />
+
+</head>
+
   <style>
     .content {
       display: block;
       justify-content: center;
       align-items: center;
-      height: 92vh;
     }
 
     body {
@@ -65,9 +70,8 @@
       background-color: #825ee4;
     }
   </style>
-
   <div class="header">
-    <h1>Welcome {{ user.get_username }} !</h1>
+    <h1 id="user">Welcome {{ user.get_username }} !</h1>
     <form method="POST" action="{% url 'logout' %}">
       <h1>It's a goodbye ?</h1>
       {% csrf_token %}
@@ -85,13 +89,64 @@
   {% endif %}
 
   <h2>Your Events:</h2>
-<ul>
-  {% for event in user.event_set.all %}
-    <li>
-      {{ event.room }} - {{ event.date }} - {{ event.start_time|date:"h:iA" }} to {{ event.end_time|date:"h:iA" }}
-    </li>
-  {% empty %}
-    <li>No events found.</li>
-  {% endfor %}
-</ul>
+
+
+
+<div id="calendar"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+    <script>
+      $(document).ready(function() {
+        fetchEvents();
+
+      function fetchEvents() {
+        var userId = '{{ user.username }}';
+        console.log(userId);
+        $.ajax({
+            url: '{% url "fetch_events_profile" %}',
+            type: 'GET',
+            data: {
+                creator: userId
+            },
+            success: function(response) {
+                renderCalendar(response.events);
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+      }
+
+      function renderCalendar(events) {
+        console.log(events);
+        var calendar = $('#calendar').fullCalendar({
+          header: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'month,agendaWeek,agendaDay'
+          },
+          defaultView: 'agendaWeek',
+          scrollTime: null,
+          height: 'auto',
+          contentHeight: 'auto',
+          events: events,
+          
+          eventRender: function(event, element) {
+            var roomName = event.room.name;
+            element.find('.fc-title').text(roomName);
+          },
+          minTime: '08:00:00', // Heure de début
+          maxTime: '18:00:00' // Heure de fin
+        });
+      }
+      });
+    </script>
+
+
+
+
+
+</body></html>
 {% endblock %}

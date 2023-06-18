@@ -91,9 +91,7 @@
                     height: 'auto', 
                     contentHeight: 'auto',
                     events: events,
-                    eventRender: function(event, element) {
-                        element.attr('title', event.title);
-                    },
+                    
                     minTime: '08:00:00', // Heure de début
                     maxTime: '18:00:00',  // Heure de fin
 
@@ -104,40 +102,45 @@
                         var room = $('#room option:selected').text(); // Récupérer le nom de la salle sélectionnée
                         var confirmation = confirm("Voulez-vous réserver la salle " + room + " le " + day + " de " + start + " à " + end + " ?");
                         var csrf_token = getCookie('csrf_token')
-                        
-                        
-                        
-                        if (confirmation) {
-                            var startDateTime = new Date(date.format('YYYY-MM-DD') + 'T' + date.format('HH:mm') + ':00');
-                            var endDateTime = new Date(date.clone().add(30, 'minutes').format('YYYY-MM-DD') + 'T' + date.clone().add(30, 'minutes').format('HH:mm') + ':00');
-                            console.log(startDateTime);
-                            console.log(endDateTime);
-                            $.ajax({
-                                url: '{% url "create_event" %}',
-                                type: 'POST',
-                                data: {
-                                    room: room,
-                                    date: day,
-                                    start_time: startDateTime.toISOString(),
-                                    end_time: endDateTime.toISOString(),
-                                    'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
-                                },
-                                success: function(response) {
-                                    console.log("Événement crééeeee avec succès !");
-                                    console.log(day + start + end);
-                                    // Afficher une fenêtre de confirmation
-                                    alert("Votre réservation a été effectuée avec succès !");
-                                    $('#calendar').fullCalendar('refetchEvents');
-                                    location.reload();
-                                },
-                                error: function(xhr, status, error) {
-                                    console.error("Une erreur s'est produite lors de la création de l'événement :", error);
-                                }
-                            });
+                        var events = $('#calendar').fullCalendar('clientEvents', function(event) {
+                        console.log(events);
+                        return moment(day).isSame(event.start, 'minute');
+                        });
+                        if (events.length > 0) {
+                            alert("Ce créneau est déjà réservé.");
+
+                        }else{
+                            if (confirmation) {
+                                var startDateTime = new Date(date.format('YYYY-MM-DD') + 'T' + date.format('HH:mm') + ':00');
+                                var endDateTime = new Date(date.clone().add(30, 'minutes').format('YYYY-MM-DD') + 'T' + date.clone().add(30, 'minutes').format('HH:mm') + ':00');
+                                console.log(startDateTime);
+                                console.log(endDateTime);
+                                $.ajax({
+                                    url: '{% url "create_event" %}',
+                                    type: 'POST',
+                                    data: {
+                                        room: room,
+                                        date: day,
+                                        start_time: startDateTime.toISOString(),
+                                        end_time: endDateTime.toISOString(),
+                                        'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+                                    },
+                                    success: function(response) {
+                                        console.log("Événement crééeeee avec succès !");
+                                        console.log(day + start + end);
+                                        // Afficher une fenêtre de confirmation
+                                        alert("Votre réservation a été effectuée avec succès !");
+                                        location.reload();
+                                    },
+                                    error: function(xhr, status, error) {
+                                        console.error("Une erreur s'est produite lors de la création de l'événement :", error);
+                                    }
+                                });
 
 
-                        } else {
-                            console.log("Réservation annulée.");
+                            } else {
+                                console.log("Réservation annulée.");
+                            }
                         }
                     }
                 });
@@ -160,7 +163,6 @@
                 return cookieValue;
             }
 
-            // Sélectionner la première salle par défaut
             var defaultRoomId = $('#room option:first').val();
             fetchEvents(defaultRoomId);
         });

@@ -1,15 +1,15 @@
 from .forms import NewUserForm, RoomForm, EventForm
 from .models import Room, Event
 from django.http import JsonResponse
+from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from datetime import datetime, time, timedelta
-from django.utils import timezone
-import pytz
+from datetime import datetime, timedelta
+from django.core.serializers import serialize
 
 def home(request):
     rooms = Room.objects.all()
@@ -66,7 +66,8 @@ def settings(request):
     return render(request, 'RoomManager/settings.html')
 
 def profile(request):
-    return render(request, 'RoomManager/profile.html')
+    user = request.user
+    return render(request, 'RoomManager/profile.html',{'user':user})
 
 
 
@@ -120,13 +121,6 @@ def delete_event(request, event_id):
 
 def room_booking(request):
     rooms = Room.objects.all()
-
-    if request.method == 'POST':
-        room_id = request.POST.get('room')
-        room = get_object_or_404(Room, id=room_id)
-        events = Event.objects.filter(room=room)
-        return render(request, 'RoomManager/room_booking.html', {'rooms': rooms, 'events': events})
-
     return render(request, 'RoomManager/room_booking.html', {'rooms': rooms})
 
 
@@ -142,4 +136,16 @@ def fetch_events(request):
             'end': event.end_time.isoformat(),
         })
 
+    return JsonResponse({'events': event_data})
+
+def fetch_events_profile(request):
+    user = request.user
+    events = Event.objects.filter(creator=user)
+    event_data = []
+    for event in events:
+        event_data.append({
+            'start': event.start_time.isoformat(),
+            'end': event.end_time.isoformat(),
+            'room': str(event.room.name)
+        })
     return JsonResponse({'events': event_data})

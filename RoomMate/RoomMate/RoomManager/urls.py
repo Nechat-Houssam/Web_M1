@@ -12,4 +12,5 @@ urlpatterns = [
     path('room_booking/', views.room_booking, name='room_booking'),
     path('create_event/', views.create_event, name='create_event'),
     path('fetch_events/', views.fetch_events, name='fetch_events'),
+    path('fetch_events_profile/', views.fetch_events_profile, name='fetch_events_profile'),
 ]
