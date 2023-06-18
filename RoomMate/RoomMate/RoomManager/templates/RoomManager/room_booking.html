@@ -91,9 +91,9 @@
                     height: 'auto', 
                     contentHeight: 'auto',
                     events: events,
-                    
-                    minTime: '08:00:00', // Heure de début
-                    maxTime: '18:00:00',  // Heure de fin
+                    timeFormat : 'H:mm',
+                    minTime: '08:00:00',
+                    maxTime: '18:00:00',
 
                     dayClick: function(date, jsEvent, view) {
                         var day = date.format('YYYY-MM-DD');
@@ -101,7 +101,7 @@
                         var end = date.clone().add(30, 'minutes').format('HH:mm');
                         var room = $('#room option:selected').text(); // Récupérer le nom de la salle sélectionnée
                         var confirmation = confirm("Voulez-vous réserver la salle " + room + " le " + day + " de " + start + " à " + end + " ?");
-                        var csrf_token = getCookie('csrf_token')
+                        var csrf_token = getCookie('csrf_token');
                         var events = $('#calendar').fullCalendar('clientEvents', function(event) {
                         console.log(events);
                         return moment(day).isSame(event.start, 'minute');
@@ -153,7 +153,6 @@
                     var cookies = document.cookie.split(';');
                     for (var i = 0; i < cookies.length; i++) {
                         var cookie = cookies[i].trim();
-                        // Rechercher le cookie qui correspond au nom donné
                         if (cookie.substring(0, name.length + 1) === (name + '=')) {
                             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                             break;

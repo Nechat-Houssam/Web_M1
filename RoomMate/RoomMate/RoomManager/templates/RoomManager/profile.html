@@ -136,16 +136,61 @@
           height: 'auto',
           contentHeight: 'auto',
           events: events,
-          
+          timeFormat : 'H:mm',
           eventRender: function(event, element) {
             var roomName = event.room;
             var eventTime = element.find('.fc-time').html();
             element.find('.fc-time').html(eventTime + ' - ' + roomName);
             element.find('.fc-title').remove();
           },
-          minTime: '08:00:00', // Heure de début
-          maxTime: '18:00:00' // Heure de fin
+          minTime: '08:00:00',
+          maxTime: '18:00:00',
+
+          eventClick: function(event, jsEvent, view) {
+            if (confirm("Voulez-vous supprimer cette réservation ?")) {
+              console.log(event);
+              console.log(event.start._i);
+              deleteEvent(event.start._i);
+              }
+            }
         });
+      }
+
+
+      function deleteEvent(start_time) {
+        var delete_Url = '{%url "delete_event"%}';
+        var csrftoken = getCookie('csrftoken');
+        $.ajax({
+          url: delete_Url,
+          type: 'POST',
+          data:{
+            start_time: start_time,
+            csrfmiddlewaretoken: csrftoken
+          },
+          success: function(response) {
+            alert("Réservation supprimée avec succès !");
+            location.reload();
+          },
+          error: function(xhr, status, error) {
+            console.error("Erreur lors de la suppression de l'événement :", error);
+          }
+        });
+      }
+
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + '=') {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
       }
       });
     </script>

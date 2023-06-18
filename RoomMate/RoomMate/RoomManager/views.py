@@ -1,15 +1,11 @@
-from .forms import NewUserForm, RoomForm, EventForm
+from .forms import NewUserForm, RoomForm
 from .models import Room, Event
 from django.http import JsonResponse
-from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
 from datetime import datetime, timedelta
-from django.core.serializers import serialize
 
 def home(request):
     rooms = Room.objects.all()
@@ -69,7 +65,8 @@ def profile(request):
     user = request.user
     return render(request, 'RoomManager/profile.html',{'user':user})
 
-
+def oursite(request):
+    return render(request, 'RoomManager/oursite.html')
 
 def create_event(request):
     if request.method == 'POST':
@@ -105,18 +102,6 @@ def create_event(request):
         pass
 
 
-def delete_event(request, event_id):
-    # Fetch the event object
-    event = get_object_or_404(Event, id=event_id)
-
-    if request.method == 'DELETE':
-        # Delete the event
-        event.delete()
-        # Return a JSON response indicating success
-        return JsonResponse({'success': True})
-    else:
-        # Return a JSON response indicating failure
-        return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
 def room_booking(request):
@@ -149,3 +134,9 @@ def fetch_events_profile(request):
             'room': event.room.name
         })
     return JsonResponse({'events': event_data})
+
+def delete_event(request):
+    start_time = request.POST.get('start_time')
+    event = get_object_or_404(Event, start_time=start_time, creator=request.user)
+    event.delete()
+    return JsonResponse({'success': True})
