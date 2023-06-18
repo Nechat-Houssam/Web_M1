@@ -146,6 +146,6 @@ def fetch_events_profile(request):
         event_data.append({
             'start': event.start_time.isoformat(),
             'end': event.end_time.isoformat(),
-            'room': str(event.room.name)
+            'room': event.room.name
         })
     return JsonResponse({'events': event_data})

@@ -69,6 +69,10 @@
     button[type="submit"]:hover {
       background-color: #825ee4;
     }
+
+
+
+
   </style>
   <div class="header">
     <h1 id="user">Welcome {{ user.get_username }} !</h1>
@@ -134,8 +138,10 @@
           events: events,
           
           eventRender: function(event, element) {
-            var roomName = event.room.name;
-            element.find('.fc-title').text(roomName);
+            var roomName = event.room;
+            var eventTime = element.find('.fc-time').html();
+            element.find('.fc-time').html(eventTime + ' - ' + roomName);
+            element.find('.fc-title').remove();
           },
           minTime: '08:00:00', // Heure de début
           maxTime: '18:00:00' // Heure de fin
