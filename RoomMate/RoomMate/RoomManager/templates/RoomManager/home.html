@@ -49,6 +49,15 @@
     <script>
         var canvas = document.getElementById("renderCanvas");
 
+		canvas.addEventListener("click", function(event) {
+            var pickResult = scene.pick(scene.pointerX, scene.pointerY);
+            if (pickResult.hit) {
+            var pickedPoint = pickResult.pickedPoint;
+            console.log("Coordonnées du clic en 3D : ", pickedPoint.x, pickedPoint.y, pickedPoint.z);
+            }
+        });
+
+
         var startRenderLoop = function (engine, canvas) {
             engine.runRenderLoop(function () {
                 if (sceneToRender && sceneToRender.activeCamera) {
