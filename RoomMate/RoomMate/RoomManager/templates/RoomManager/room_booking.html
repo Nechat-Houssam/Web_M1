@@ -15,8 +15,6 @@
             width: 100%;
             height: 70vh; /* Ajustez la valeur selon vos besoins */
             overflow: auto; /* Ajoutez une barre de défilement si nécessaire */
-
-
         }
     
         #calendar {
@@ -30,124 +28,89 @@
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         }
 
-        .fc-toolbar , .fc-view-container{
+        .fc-toolbar , .fc-view-container {
             margin-left: 30px;
             margin-right: 30px;
-
             align-items: center;
-        
         }
 
-        .fc-left, .fc_right, .fc-center{
+        .fc-left, .fc_right, .fc-center {
             flex: 1 0 auto;
         } 
 
-        
-       
-        .fc-toolbar{
+        .fc-toolbar {
             height: 80px;
             margin-top: 20px;
-                  
             display: flex;
         }
- 
 
-        #calendar-container{
-    
-      
-        }
-
-        .container_top{
+        .container_top {
             flex: 0 0 auto;
             display: flex;
             height: 120px;
             align-items: center;
-          
-    
-            
-
         }
 
-        .container_sub_top{
+        .container_sub_top {
             flex: 1 0 auto;
             margin-left: 50px;
             margin-right: 50px;
             height: 80px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-          
             border-radius: 15px;
             display: flex;
             background-color: white;
-            
         }
 
-
-        .sub_top_elem{
+        .sub_top_elem {
             flex: 1 0 auto;
         }
 
         .container_sub_top > h1 {
             flex: 1 0 auto;
-            display:flex;
+            display: flex;
             align-items: center;
             justify-content: center;
             color: rgb(88, 172, 224);
         }
 
-    
-     
         .container_sub_top > form {
             flex: 1 0 auto;
-            display:flex;
+            display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .container_part1{
+        .container_part1 {
             flex: 0 0 auto;
-            
         }
-        .content{
+        
+        .content {
             display: flex;
             flex-direction: column;
             background-color: rgb(245, 244, 244);
-       
         }
-
-
-
-
-        
     </style>
-
-
 </head>
 <body>
-
     <div class="container_top">
-    <div class="container_sub_top">
-    <h1 calss="sub_top_elem">Room Booking</h1>
+        <div class="container_sub_top">
+            <h1 class="sub_top_elem">Room Booking</h1>
 
-    
-
-    <form calss="sub_top_elem" id="roomForm">
-        {% csrf_token %}
-        <label for="room">Choose a room:</label>
-        <select name="room" id="room">
-            {% for room in rooms %}
-                <option value="{{ room.id }}">{{ room.name }}</option>
-            {% endfor %}
-        </select>
-    </form>
+            <form class="sub_top_elem" id="roomForm">
+                {% csrf_token %}
+                <label for="room">Choose a room:</label>
+                <select name="room" id="room">
+                    {% for room in rooms %}
+                        <option value="{{ room.id }}">{{ room.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
     </div>
+    <div id="calendar-container">
+        <div id="calendar"></div>
     </div>
-
-
-
-
-<div id="calendar-container">
-    <div id="calendar"></div>
-</div>
     <!-- Inclure les fichiers JavaScript de FullCalendar -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
@@ -161,7 +124,6 @@
                 var selectedRoom = $(this).val();
                 fetchEvents(selectedRoom);
             });
-
 
             function fetchEvents(roomId) {
                 $.ajax({
@@ -192,10 +154,10 @@
                     },
                     defaultView: 'agendaWeek',
                     scrollTime: null,
-                    height: 'auto', 
+                    height: 'auto',
                     contentHeight: 'auto',
                     events: events,
-                    timeFormat : 'H:mm',
+                    timeFormat: 'H:mm',
                     minTime: '08:00:00',
                     maxTime: '18:00:00',
 
@@ -207,18 +169,14 @@
                         var confirmation = confirm("Voulez-vous réserver la salle " + room + " le " + day + " de " + start + " à " + end + " ?");
                         var csrf_token = getCookie('csrf_token');
                         var events = $('#calendar').fullCalendar('clientEvents', function(event) {
-                        console.log(events);
-                        return moment(day).isSame(event.start, 'minute');
+                            return moment(day).isSame(event.start, 'minute');
                         });
                         if (events.length > 0) {
                             alert("Ce créneau est déjà réservé.");
-
-                        }else{
+                        } else {
                             if (confirmation) {
                                 var startDateTime = new Date(date.format('YYYY-MM-DD') + 'T' + date.format('HH:mm') + ':00');
                                 var endDateTime = new Date(date.clone().add(30, 'minutes').format('YYYY-MM-DD') + 'T' + date.clone().add(30, 'minutes').format('HH:mm') + ':00');
-                                console.log(startDateTime);
-                                console.log(endDateTime);
                                 $.ajax({
                                     url: '{% url "create_event" %}',
                                     type: 'POST',
@@ -230,7 +188,7 @@
                                         'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
                                     },
                                     success: function(response) {
-                                        console.log("Événement crééeeee avec succès !");
+                                        console.log("Événement créé avec succès !");
                                         console.log(day + start + end);
                                         // Afficher une fenêtre de confirmation
                                         alert("Votre réservation a été effectuée avec succès !");
@@ -240,16 +198,31 @@
                                         console.error("Une erreur s'est produite lors de la création de l'événement :", error);
                                     }
                                 });
-
-
                             } else {
                                 console.log("Réservation annulée.");
                             }
                         }
-                    }
+                    },
+
+                    eventClick: function(calEvent, jsEvent, view) {
+                        if (calEvent.creator === '{{ request.user.id }}') {
+                            return;
+                        }
+                        var csrf_token = getCookie('csrf_token');
+                        var confirmation = confirm("Do you want to send a request to the booking creator?");
+                        if (confirmation) {
+                            var eventId = calEvent.id;
+                            console.log("eventId", eventId);
+                            $.ajax({
+                                url: "{% url 'create_event_request' %}",
+                                method: 'POST',
+                                data: { event_id: eventId },
+                                'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+                            });
+                        }
+                    },
                 });
             }
-
 
             function getCookie(name) {
                 var cookieValue = null;

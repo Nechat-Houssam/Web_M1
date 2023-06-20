@@ -3,201 +3,262 @@
 {% block content %}
 <head>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css" media="print" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css" media="print" />
 </head>
 
-  <style>
-    .content {
-      display: block;
-      justify-content: center;
-      align-items: center;
-    }
+<style>
+  .content {
+    display: block;
+    justify-content: center;
+    align-items: center;
+  }
 
-    body {
-      background-color: #f7f7f7;
-    }
+  body {
+    background-color: #f7f7f7;
+  }
+  
+  .welcome_bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+  }
 
-    .header {
-      display: flex;
-    }
+  .welcome_bar h1 {
+    margin-left: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 30px;
+    color: #5e72e4;
+  }
 
-    .header h1 {
-      margin-right: auto;
-    }
+  .logout {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: auto;
+  }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      padding: 10px 30px 25px 30px;
-      background-color: #fff;
-      border-radius: 20px;
-      box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
-      margin: 20px;
-    }
+  .logout h1 {
+    margin-right: 10px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    font-size: 22px;
+    color: #5e72e4;
+  }
 
-    h1 {
-      color: #5e72e4;
-      font-size: 28px;
-      margin-bottom: 25px;
-      text-align: center;
-    }
+  .logout button {
+    background-color: #5e72e4;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 5px;
+    padding: 5px 20px;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+  }
 
-    input[type="text"], input[type="password"] {
-      border: 1px solid #5e72e4;
-      border-radius: 5px;
-      font-size: 16px;
-      padding: 15px 20px;
-      margin-bottom: 20px;
-      width: 100%;
-      box-sizing: border-box;
-    }
+  .perso {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0px 20px 20px 20px;
+  }
 
-    button[type="submit"] {
-      background-color: #5e72e4;
-      border: none;
-      color: #fff;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-      margin-top: 5px;
-      padding: 15px 20px;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
-    }
+  .account, .requests, .invitations {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+  }
 
-    button[type="submit"]:hover {
-      background-color: #825ee4;
-    }
+  .account {
+    width: 20%;
+  }
 
+  .requests, .invitations {
+    width: 38%;
+  }
 
+  form {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+  }
 
+  input[type="text"],
+  input[type="password"] {
+    border: 1px solid #5e72e4;
+    border-radius: 5px;
+    font-size: 16px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
 
-  </style>
-  <div class="header">
-    <h1 id="user">Welcome {{ user.get_username }} !</h1>
-    <form method="POST" action="{% url 'logout' %}">
-      <h1>It's a goodbye ?</h1>
-      {% csrf_token %}
-      <button type="submit">Log out</button>
-    </form>
+  button[type="submit"] {
+    background-color: #5e72e4;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 5px;
+    padding: 15px 20px;
+    transition: background-color 0.3s ease;
+  }
+
+  button[type="submit"]:hover {
+    background-color: #825ee4;
+  }
+
+  .calendar_container {
+    margin: 0px 20px 20px 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+    box-sizing: content-box;
+  }
+</style>
+
+<div class="header">
+  <form method="POST" action="{% url 'logout' %}">
+    <div class="welcome_bar">
+      <h1 id="user">Welcome {{ user.get_username }} !</h1>
+      <div class="logout">
+        <h1>It's a goodbye ?</h1>
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="perso">
+  <div class="account">
+    Account information here
   </div>
+  <div class="requests">
+    Requests here
+  </div>
+  <div class="invitations">
+    Invitations here
+  </div>
+</div>
 
-  {% if user.is_superuser %}
-  <h2>Administrator stuff :</h2>
+<div class="calendar_container" id="calendar"></div>
+
+{% if user.is_superuser %}
+  <h2>Administrator stuff:</h2>
   <form method="get" action="{% url 'create_room' %}">
     <h1>Create new rooms</h1>
     {% csrf_token %}
     <button type="submit">Go to room creation</button>
   </form>
-  {% endif %}
+{% endif %}
 
-  <h2>Your Events:</h2>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+<script>
+  $(document).ready(function() {
+    fetchEvents();
 
+    function fetchEvents() {
+      var userId = '{{ user.username }}';
+      console.log(userId);
+      $.ajax({
+        url: '{% url "fetch_events_profile" %}',
+        type: 'GET',
+        data: {
+          creator: userId
+        },
+        success: function(response) {
+          renderCalendar(response.events);
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    }
 
+    function renderCalendar(events) {
+      console.log(events);
+      var calendar = $('#calendar').fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        defaultView: 'agendaWeek',
+        scrollTime: null,
+        height: 'auto',
+        contentHeight: 'auto',
+        events: events,
+        timeFormat: 'H:mm',
+        eventRender: function(event, element) {
+          var roomName = event.room;
+          var eventTime = element.find('.fc-time').html();
+          element.find('.fc-time').html(eventTime + ' - ' + roomName);
+          element.find('.fc-title').remove();
+        },
+        minTime: '08:00:00',
+        maxTime: '18:00:00',
 
-<div id="calendar"></div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
-    <script>
-      $(document).ready(function() {
-        fetchEvents();
-
-      function fetchEvents() {
-        var userId = '{{ user.username }}';
-        console.log(userId);
-        $.ajax({
-            url: '{% url "fetch_events_profile" %}',
-            type: 'GET',
-            data: {
-                creator: userId
-            },
-            success: function(response) {
-                renderCalendar(response.events);
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-            }
-        });
-      }
-
-      function renderCalendar(events) {
-        console.log(events);
-        var calendar = $('#calendar').fullCalendar({
-          header: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'month,agendaWeek,agendaDay'
-          },
-          defaultView: 'agendaWeek',
-          scrollTime: null,
-          height: 'auto',
-          contentHeight: 'auto',
-          events: events,
-          timeFormat : 'H:mm',
-          eventRender: function(event, element) {
-            var roomName = event.room;
-            var eventTime = element.find('.fc-time').html();
-            element.find('.fc-time').html(eventTime + ' - ' + roomName);
-            element.find('.fc-title').remove();
-          },
-          minTime: '08:00:00',
-          maxTime: '18:00:00',
-
-          eventClick: function(event, jsEvent, view) {
-            if (confirm("Voulez-vous supprimer cette réservation ?")) {
-              console.log(event);
-              console.log(event.start._i);
-              deleteEvent(event.start._i);
-              }
-            }
-        });
-      }
-
-
-      function deleteEvent(start_time) {
-        var delete_Url = '{%url "delete_event"%}';
-        var csrftoken = getCookie('csrftoken');
-        $.ajax({
-          url: delete_Url,
-          type: 'POST',
-          data:{
-            start_time: start_time,
-            csrfmiddlewaretoken: csrftoken
-          },
-          success: function(response) {
-            alert("Réservation supprimée avec succès !");
-            location.reload();
-          },
-          error: function(xhr, status, error) {
-            console.error("Erreur lors de la suppression de l'événement :", error);
-          }
-        });
-      }
-
-
-      function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-          const cookies = document.cookie.split(';');
-          for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === name + '=') {
-              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-              break;
-            }
+        eventClick: function(event, jsEvent, view) {
+          if (confirm("Voulez-vous supprimer cette réservation ?")) {
+            console.log(event);
+            console.log(event.start._i);
+            deleteEvent(event.start._i);
           }
         }
-        return cookieValue;
-      }
       });
-    </script>
+    }
 
+    function deleteEvent(start_time) {
+      var delete_Url = '{% url "delete_event" %}';
+      var csrftoken = getCookie('csrftoken');
+      $.ajax({
+        url: delete_Url,
+        type: 'POST',
+        data: {
+          start_time: start_time,
+          csrfmiddlewaretoken: csrftoken
+        },
+        success: function(response) {
+          alert("Réservation supprimée avec succès !");
+          location.reload();
+        },
+        error: function(xhr, status, error) {
+          console.error("Erreur lors de la suppression de l'événement :", error);
+        }
+      });
+    }
 
-
-
-
-</body></html>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === name + '=') {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  });
+</script>
+</body>
+</html>
 {% endblock %}

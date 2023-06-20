@@ -14,6 +14,6 @@ urlpatterns = [
     path('fetch_events/', views.fetch_events, name='fetch_events'),
     path('fetch_events_profile/', views.fetch_events_profile, name='fetch_events_profile'),
     path('oursite/', views.oursite, name='oursite'),
-    path('delete_event/',views.delete_event, name='delete_event')
-
+    path('delete_event/',views.delete_event, name='delete_event'),
+    path('create_event_request/', views.create_event_request, name='create_event_request'),
 ]

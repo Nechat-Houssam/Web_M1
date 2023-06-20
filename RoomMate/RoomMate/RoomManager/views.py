@@ -1,5 +1,5 @@
 from .forms import NewUserForm, RoomForm
-from .models import Room, Event
+from .models import Room, Event, EventRequest, EventInvite
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
@@ -45,7 +45,6 @@ def register_request(request):
 		messages.error(request, "Unsuccessful registration : invalid information")
 	form = NewUserForm()
 	return render(request=request, template_name="RoomManager/register.html", context={"register_form":form})
-
 
 def create_room_request(request):
 	if request.method == "POST":
@@ -101,26 +100,20 @@ def create_event(request):
     else:
         pass
 
-
-
-
 def room_booking(request):
     rooms = Room.objects.all()
     return render(request, 'RoomManager/room_booking.html', {'rooms': rooms})
-
 
 def fetch_events(request):
     room_id = request.GET.get('room_id')
     room = Room.objects.get(id=room_id)
     events = Event.objects.filter(room=room)
-
     event_data = []
     for event in events:
         event_data.append({
             'start': event.start_time.isoformat(),
             'end': event.end_time.isoformat(),
         })
-
     return JsonResponse({'events': event_data})
 
 def fetch_events_profile(request):
@@ -140,3 +133,16 @@ def delete_event(request):
     event = get_object_or_404(Event, start_time=start_time, creator=request.user)
     event.delete()
     return JsonResponse({'success': True})
+
+def create_event_request(request, event_id):
+    if request.method == 'GET':
+        event = Event.objects.get(id=event_id)
+        
+        # Create the event request
+        EventRequest.objects.create(from_profile=request.user, to_event=event)
+        
+        # Redirect to a success page or any other desired destination
+        return redirect('success_page')  # Replace 'success_page' with the actual URL name of your success page
+
+    # Handle other HTTP methods if needed
+    return redirect('error_page')  # Replace 'error_page' with the actual URL name of your error page or handle the error accordingly
