@@ -111,6 +111,7 @@
     font-size: 16px;
     font-weight: bold;
     margin-top: 5px;
+    border-radius: 20px;
     padding: 15px 20px;
     transition: background-color 0.3s ease;
   }
@@ -126,6 +127,31 @@
     border-radius: 20px;
     box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
     box-sizing: content-box;
+  }
+
+  .staff {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .staff h1 {
+    margin: 0px 20px;
+    font-size: 16px;
+    color: #5e72e4;
+  }
+
+  .staff form {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+    margin: 0px 20px 20px 20px;
+  }
+
+  .staff button {
+    margin: 10px;
   }
 </style>
 
@@ -156,14 +182,22 @@
 
 <div class="calendar_container" id="calendar"></div>
 
-{% if user.is_superuser %}
-  <h2>Administrator stuff:</h2>
+<div class="staff">
+  {% if user.is_superuser or user.profile.role == 'M' %}
   <form method="get" action="{% url 'create_room' %}">
     <h1>Create new rooms</h1>
     {% csrf_token %}
     <button type="submit">Go to room creation</button>
   </form>
-{% endif %}
+  {% if user.is_superuser %}
+    <form method="post" action="{% url 'user_role_reset' %}">
+      {% csrf_token %}
+      <h1>Reset User Roles</h1>
+      <button type="submit">Reset Roles</button>
+    </form>
+  {% endif %}
+  {% endif %}
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
