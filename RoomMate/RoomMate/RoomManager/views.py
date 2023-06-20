@@ -168,3 +168,22 @@ def user_role_reset(request):
         messages.error(request, "You do not have permission to reset user roles")
 
     return redirect("home")
+
+def update_user_info(request):
+    if request.method == 'POST':
+        user = request.user
+
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        if email:
+            user.email = email
+
+        if password:
+            user.set_password(password)
+            
+        user.save()
+    else:
+        pass
+    
+    return redirect("profile")
