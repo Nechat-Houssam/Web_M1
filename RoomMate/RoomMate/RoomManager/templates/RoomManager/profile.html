@@ -140,6 +140,11 @@
     color: #5e72e4;
   }
 
+  h1 {
+    font-size: 16px;
+    margin: 20px 20px 20px 20px;
+  }
+
   .staff form {
     display: flex;
     flex-direction: row;
@@ -180,22 +185,29 @@
   </div>
 </div>
 
-<div class="calendar_container" id="calendar"></div>
+
+{% if user.profile.room_set.all %}
+  <div class="calendar_container" id="calendar"></div>
+{% else %}
+  <form method="post">
+    <h1>No rooms associated with the user.</h1>
+  </form>
+{% endif %}
 
 <div class="staff">
   {% if user.is_superuser or user.profile.role == 'M' %}
-  <form method="get" action="{% url 'create_room' %}">
-    <h1>Create new rooms</h1>
-    {% csrf_token %}
-    <button type="submit">Go to room creation</button>
-  </form>
-  {% if user.is_superuser %}
-    <form method="post" action="{% url 'user_role_reset' %}">
+    <form method="get" action="{% url 'create_room' %}">
+      <h1>Create new rooms</h1>
       {% csrf_token %}
-      <h1>Reset User Roles</h1>
-      <button type="submit">Reset Roles</button>
+      <button type="submit">Go to room creation</button>
     </form>
-  {% endif %}
+    {% if user.is_superuser %}
+      <form method="post" action="{% url 'user_role_reset' %}">
+        {% csrf_token %}
+        <h1>Reset User Roles</h1>
+        <button type="submit">Reset Roles</button>
+      </form>
+    {% endif %}
   {% endif %}
 </div>
 
