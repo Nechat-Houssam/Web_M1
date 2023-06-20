@@ -1,5 +1,5 @@
 from .forms import NewUserForm, RoomForm
-from .models import Room, Event, EventRequest, EventInvite
+from .models import User, UserProfile, Room, Event, EventRequest, EventInvite
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
@@ -35,16 +35,20 @@ def logout_request(request):
 	return redirect("home")
 
 def register_request(request):
-	if request.method == "POST":
-		form = NewUserForm(request.POST)
-		if form.is_valid():
-			user = form.save()
-			login(request, user)
-			messages.success(request, "Registration successful" )
-			return redirect("home")
-		messages.error(request, "Unsuccessful registration : invalid information")
-	form = NewUserForm()
-	return render(request=request, template_name="RoomManager/register.html", context={"register_form":form})
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+
+            profile = UserProfile(user=user, role='N')
+            profile.save()
+
+            login(request, user)
+            messages.success(request, "Registration successful")
+            return redirect("home")
+        messages.error(request, "Unsuccessful registration: invalid information")
+    form = NewUserForm()
+    return render(request=request, template_name="RoomManager/register.html", context={"register_form": form})
 
 def create_room_request(request):
 	if request.method == "POST":
@@ -146,3 +150,21 @@ def create_event_request(request, event_id):
 
     # Handle other HTTP methods if needed
     return redirect('error_page')  # Replace 'error_page' with the actual URL name of your error page or handle the error accordingly
+
+def user_role_reset(request):
+    if request.user.is_superuser:
+        profiles = UserProfile.objects.all()
+        for profile in profiles:
+            if not profile.user.is_superuser:
+                profile.role = 'N'
+                profile.save()
+
+        users_without_profile = User.objects.filter(profile=None)
+        for user in users_without_profile:
+            UserProfile.objects.create(user=user, role='N')
+
+        messages.success(request, "User roles have been reset")
+    else:
+        messages.error(request, "You do not have permission to reset user roles")
+
+    return redirect("home")

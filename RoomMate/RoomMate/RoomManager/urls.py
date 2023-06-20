@@ -16,4 +16,5 @@ urlpatterns = [
     path('oursite/', views.oursite, name='oursite'),
     path('delete_event/',views.delete_event, name='delete_event'),
     path('create_event_request/', views.create_event_request, name='create_event_request'),
+    path('user_role_reset/', views.user_role_reset, name='user_role_reset'),
 ]
