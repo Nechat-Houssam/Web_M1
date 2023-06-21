@@ -68,9 +68,9 @@ def profile(request):
     user = request.user
     return render(request, 'RoomManager/profile.html',{'user':user})
 
-def oursite(request):
+def about(request):
     rooms = Room.objects.all()
-    return render(request, 'RoomManager/oursite.html', {'rooms': rooms})
+    return render(request, 'RoomManager/about.html', {'rooms': rooms})
 
 def create_event(request):
     room_name = request.POST.get('room')

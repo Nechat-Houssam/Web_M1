@@ -14,9 +14,9 @@
             {% if user.is_superuser %}
                 <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
             {% endif %}
-            <li><a href="{% url 'oursite' %}">About</a></li>
-            {% if user.is_authenticated %}
             <li><a href="{% url 'home' %}">Home</a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'about' %}">About</a></li>
             <li><a href="{% url 'room_booking' %}">Booking</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
             <li><a href="{% url 'profile' %}">{{ user.get_username }}</a></li>
