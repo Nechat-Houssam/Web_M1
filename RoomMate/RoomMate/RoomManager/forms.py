@@ -40,5 +40,6 @@ class EventForm(forms.ModelForm):
         fields = ['date', 'start_time', 'end_time', 'room']
         
 class UpdateUserInfoForm(forms.Form):
+    username = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'Username'}))
     email = forms.EmailField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)

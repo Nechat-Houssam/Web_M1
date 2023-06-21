@@ -180,6 +180,15 @@ def update_user_info(request):
             user = request.user
             user.email = form.cleaned_data['email']
             user.set_password(form.cleaned_data['password'])
+            
+            new_username = form.cleaned_data['username']
+            if new_username != user.username:
+                if User.objects.filter(username=new_username).exists():
+                    form.add_error('username', 'Username is already taken.')
+                    messages.error(request,"Username already taken")
+                    return redirect("profile")  
+                user.username = new_username
+            
             user.save()
             
             updated_user = authenticate(username=user.username, password=form.cleaned_data['password'])
