@@ -1,9 +1,11 @@
 {% extends 'RoomManager/base.html' %}
 
 {% block content %}
+
 <head>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css" media="print" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.print.min.css"
+    media="print" />
 </head>
 
 <style>
@@ -17,7 +19,7 @@
   body {
     background-color: #f7f7f7;
   }
-  
+
   .welcome_bar {
     display: flex;
     flex-direction: row;
@@ -67,7 +69,9 @@
     margin: 0px 20px 20px 20px;
   }
 
-  .account, .requests, .invitations {
+  .account,
+  .requests-container,
+  .invitations {
     display: flex;
     flex-direction: column;
     background-color: #fff;
@@ -88,7 +92,8 @@
     margin-top: 5px;
   }
 
-  .requests, .invitations {
+  .requests-container,
+  .invitations {
     width: 35%;
   }
 
@@ -175,8 +180,8 @@
     margin: 10px;
   }
 
-  .requests{
-    padding : 20px;
+  .requests {
+    margin-left: 20px;
   }
 </style>
 
@@ -212,10 +217,13 @@
   </div>
 
 
+  <div class="requests-container">
+    <h1>Your requests :</h1>
+    <div class="requests">
 
-  <div class="requests">
-
+    </div>
   </div>
+
 
 
 
@@ -224,23 +232,23 @@
   </div>
 </div>
 
-  <div class="calendar_container" id="calendar"></div>
+<div class="calendar_container" id="calendar"></div>
 
 
 <div class="staff">
   {% if user.is_superuser or user.profile.role == 'M' %}
-    <form method="get" action="{% url 'create_room' %}">
-      <h1>Create new rooms</h1>
-      {% csrf_token %}
-      <button type="submit">Go to room creation</button>
-    </form>
-    {% if user.is_superuser %}
-      <form method="post" action="{% url 'user_role_reset' %}">
-        {% csrf_token %}
-        <h1>Reset User Roles</h1>
-        <button type="submit">Reset Roles</button>
-      </form>
-    {% endif %}
+  <form method="get" action="{% url 'create_room' %}">
+    <h1>Create new rooms</h1>
+    {% csrf_token %}
+    <button type="submit">Go to room creation</button>
+  </form>
+  {% if user.is_superuser %}
+  <form method="post" action="{% url 'user_role_reset' %}">
+    {% csrf_token %}
+    <h1>Reset User Roles</h1>
+    <button type="submit">Reset Roles</button>
+  </form>
+  {% endif %}
   {% endif %}
 </div>
 
@@ -248,25 +256,28 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     fetchEvents();
 
     $.ajax({
       url: '{% url "user_requests" %}',
       type: 'GET',
-      success: function(response) {
+      success: function (response) {
         var requests = JSON.parse(response.requests);
-    
+
         var html = '';
         for (var i = 0; i < requests.length; i++) {
           var request = requests[i];
           html += '<p>From: ' + request.from_profile_username + '</p>';
-          html += '<p>Event Start: ' + request.to_event_start + '</p>';
           html += '<p>Event Room: ' + request.to_event_room + '</p>';
+          var dateTimeString = request.to_event_start;
+          var dateTime = new Date(dateTimeString);
+          var formattedDateTime = dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) + ' ' + dateTime.toLocaleDateString();
+          html += '<p>Event Start: ' + formattedDateTime + '</p>';
           html += '<button class="accept-btn">Accept</button>';
           html += '<button class="reject-btn">Reject</button>';
         }
-    
+
         $('.requests').html(html);
       },
     });
@@ -283,16 +294,16 @@
         data: {
           creator: userId
         },
-        success: function(response) {
+        success: function (response) {
           console.log(response);
           if (response.events.length > 0) {
-          renderCalendar(response.events);
+            renderCalendar(response.events);
           }
-          else{
+          else {
             $('#calendar').html('<form method="post"><h1>No rooms associated with the user.</h1></form>')
           }
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
           console.error(error);
         }
       });
@@ -311,7 +322,7 @@
         contentHeight: 'auto',
         events: events,
         timeFormat: 'H:mm',
-        eventRender: function(event, element) {
+        eventRender: function (event, element) {
           var roomName = event.room;
           var eventTime = element.find('.fc-time').html();
           element.find('.fc-time').html(eventTime + ' - ' + roomName);
@@ -320,7 +331,7 @@
         minTime: '08:00:00',
         maxTime: '18:00:00',
 
-        eventClick: function(event, jsEvent, view) {
+        eventClick: function (event, jsEvent, view) {
           if (confirm("Are you sure you want to delete this booking?")) {
             deleteEvent(event.start._i);
           }
@@ -340,7 +351,7 @@
           start_time: start_time,
           csrfmiddlewaretoken: csrftoken
         },
-        success: function(response) {
+        success: function (response) {
           alert("Booking successfully deleted!");
           location.reload();
         }
@@ -367,5 +378,6 @@
   });
 </script>
 </body>
+
 </html>
 {% endblock %}
