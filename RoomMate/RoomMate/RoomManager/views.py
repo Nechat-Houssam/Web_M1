@@ -282,7 +282,7 @@ def delete_note(request, note_id):
 
 def user_requests(request):
     user_events = Event.objects.filter(creator=request.user)
-    user_requests = EventRequest.objects.filter(to_event__in=user_events, status=0)
+    user_requests = EventRequest.objects.filter(to_event__in=user_events, status=False)
 
     serialized_requests = []
     for request in user_requests:
