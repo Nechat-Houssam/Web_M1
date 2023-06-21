@@ -204,20 +204,32 @@
                         }
                     },
 
-                    eventClick: function(calEvent, jsEvent, view) {
-                        if (calEvent.creator === '{{ request.user.id }}') {
+                    eventClick: function (calEvent, jsEvent, view) {
+                        if (calEvent.creator === '{{ request.user.name }}') {
                             return;
                         }
-                        var csrf_token = getCookie('csrf_token');
-                        var confirmation = confirm("Do you want to send a request to the booking creator?");
+                        var start = calEvent.start._i;
+                        var room = $('#room option:selected').text();
+                        var csrftoken = getCookie('csrftoken');
+                        var confirmation = confirm("Souhaitez-vous envoyer une demande d'invitation à l'auteur de cette réservation ?");
+                        var url = '{% url "create_event_request" %}';
                         if (confirmation) {
-                            var eventId = calEvent.id;
-                            console.log("eventId", eventId);
                             $.ajax({
-                                url: "{% url 'create_event_request' %}",
+                                url: url,
                                 method: 'POST',
-                                data: { event_id: eventId },
-                                'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+                                data: {
+                                    room : room,
+                                    start: start,
+                                    csrfmiddlewaretoken: csrftoken
+                                },
+                                success: function (response) {
+                                    console.log("Demande d'invitation envoyée avec succès !");
+                                    alert("Votre demande d'invitation a été envoyée avec succès !");
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error("Une erreur s'est produite lors de l'envoi de la demande :", error);
+                                    alert("Une erreur s'est produite lors de l'envoi de la demande d'invitation.");
+                                }
                             });
                         }
                     },

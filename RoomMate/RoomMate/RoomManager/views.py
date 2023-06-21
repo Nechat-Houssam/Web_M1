@@ -138,18 +138,14 @@ def delete_event(request):
     event.delete()
     return JsonResponse({'success': True})
 
-def create_event_request(request, event_id):
-    if request.method == 'GET':
-        event = Event.objects.get(id=event_id)
-        
-        # Create the event request
-        EventRequest.objects.create(from_profile=request.user, to_event=event)
-        
-        # Redirect to a success page or any other desired destination
-        return redirect('success_page')  # Replace 'success_page' with the actual URL name of your success page
-
-    # Handle other HTTP methods if needed
-    return redirect('error_page')  # Replace 'error_page' with the actual URL name of your error page or handle the error accordingly
+def create_event_request(request):
+    print("la vue marche")
+    room_name = request.POST.get('room')
+    room = get_object_or_404(Room, name=room_name)
+    start_time = request.POST.get('start')
+    event = get_object_or_404(Event, room=room, start_time=start_time)
+    EventRequest.objects.create(from_profile=request.user, to_event=event)
+    return JsonResponse({'success':True})   
 
 def user_role_reset(request):
     if request.user.is_superuser:
