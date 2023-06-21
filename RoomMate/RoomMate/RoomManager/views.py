@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from datetime import datetime, timedelta
-from django.contrib.auth.decorators import login_required
+from django.core import serializers
 import json, requests
 from django.utils import timezone
 
@@ -283,3 +283,20 @@ def delete_note(request, note_id):
     else:
         form = NoteForm(instance=note)
     return render(request, 'RoomManager/edit_note.html', {'note_form': form, 'note_id': note_id})
+
+def user_requests(request):
+    user_events = Event.objects.filter(creator=request.user)
+    user_requests = EventRequest.objects.filter(to_event__in=user_events)
+
+    serialized_requests = []
+    for request in user_requests:
+        serialized_request = {
+            'from_profile_username': request.from_profile.username,
+            'to_event_start': request.to_event.start_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+            'to_event_room': request.to_event.room.name,
+        }
+        print(serialized_request)
+        serialized_requests.append(serialized_request)
+
+    json_data = json.dumps(serialized_requests)
+    return JsonResponse({'requests': json_data})
