@@ -183,7 +183,7 @@
 <div class="perso">
   <div class="account">
     <h1>Account Information</h1>
-    <form method="post" action="{% url 'update_user_info' %}" onsubmit="confirmPasswordChange(event)">
+    <form method="post" action="{% url 'update_user_info' %}">
       {% csrf_token %}
       <label for="username">Username:</label>
       <input type="text" id="username" name="username" value="{{ user.username }}">
@@ -338,13 +338,6 @@
     }
 
 
-    function confirmPasswordChange(event) {
-      var confirmed = confirm("Are you sure you want to change your password?");
-    
-      if (!confirmed) {
-        event.preventDefault();
-      }
-    }
 
 
     function getCookie(name) {
