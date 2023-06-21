@@ -1,4 +1,4 @@
-from .forms import NewUserForm, RoomForm
+from .forms import NewUserForm, RoomForm, UpdateUserInfoForm
 from .models import User, UserProfile, Room, Event, EventRequest, EventInvite
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -6,6 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from datetime import datetime, timedelta
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     rooms = Room.objects.all()
@@ -101,7 +102,6 @@ def create_event(request):
     }
     return JsonResponse(response_data)
 
-
 def room_booking(request):
     rooms = Room.objects.all()
     return render(request, 'RoomManager/room_booking.html', {'rooms': rooms})
@@ -137,7 +137,6 @@ def delete_event(request):
     return JsonResponse({'success': True})
 
 def create_event_request(request):
-
     room_name = request.POST.get('room')
     room = get_object_or_404(Room, name=room_name)
     start_time = request.POST.get('start')
@@ -154,9 +153,6 @@ def create_event_request(request):
         print("non")
         EventRequest.objects.create(from_profile=request.user, to_event=event)
         return JsonResponse({'success':True})   
-
-
-
 
 def user_role_reset(request):
     if request.user.is_superuser:
@@ -176,21 +172,21 @@ def user_role_reset(request):
 
     return redirect("home")
 
+@login_required
 def update_user_info(request):
     if request.method == 'POST':
-        user = request.user
-
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        if email:
-            user.email = email
-
-        if password:
-            user.set_password(password)
+        form = UpdateUserInfoForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            user.email = form.cleaned_data['email']
+            user.set_password(form.cleaned_data['password'])
+            user.save()
             
-        user.save()
+            updated_user = authenticate(username=user.username, password=form.cleaned_data['password'])
+            login(request, updated_user)
+            
+            return redirect("profile")  
     else:
         pass
     
-    return redirect("profile")
+    return redirect("home")

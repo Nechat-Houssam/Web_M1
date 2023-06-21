@@ -38,3 +38,7 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['date', 'start_time', 'end_time', 'room']
+        
+class UpdateUserInfoForm(forms.Form):
+    email = forms.EmailField(label='Email')
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
