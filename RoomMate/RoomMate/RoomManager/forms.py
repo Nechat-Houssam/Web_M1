@@ -1,5 +1,5 @@
 from django import forms
-from .models import Room, Event
+from .models import Room, Event, Note
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -43,3 +43,8 @@ class UpdateUserInfoForm(forms.Form):
     username = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'Username'}))
     email = forms.EmailField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
+
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ('title', 'content')

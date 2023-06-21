@@ -1,5 +1,5 @@
-from .forms import NewUserForm, RoomForm, UpdateUserInfoForm
-from .models import User, UserProfile, Room, Event, EventRequest, EventInvite
+from .forms import NewUserForm, RoomForm, NoteForm
+from .models import User, UserProfile, Room, Event, EventRequest, EventInvite, Note
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
@@ -7,6 +7,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
+import json, requests
+from django.utils import timezone
 
 def home(request):
     rooms = Room.objects.all()
@@ -61,9 +63,6 @@ def create_room_request(request):
 		messages.error(request, "Unsuccessful room creation : invalid information")
 	form = RoomForm()
 	return render(request=request, template_name="RoomManager/create_room.html", context={"room_form":form})
-
-def settings(request):
-    return render(request, 'RoomManager/settings.html')
 
 def profile(request):
     user = request.user
@@ -199,3 +198,94 @@ def update_user_info(request):
         pass
     
     return redirect("home")
+
+def dashboard(request):
+    user = request.user
+    notes = Note.objects.filter(user=user)
+    url = f'http://api.openweathermap.org/data/2.5/weather?q=Paris&APPID=f9c2f0f368afcfb53b6a73a394cfef82&units=metric'
+    response = requests.get(url)
+    data = json.loads(response.text)
+    if 'main' in data:
+        data['main']['temp_parts'] = separate_temperature_parts(data['main']['temp'])
+        data['main']['temp_min_parts'] = separate_temperature_parts(data['main']['temp_min'])
+        data['main']['temp_max_parts'] = separate_temperature_parts(data['main']['temp_max'])
+        data['main']['feels_like_parts'] = separate_temperature_parts(data['main']['feels_like'])
+    else:
+        data = None
+    context = {
+        'data': data,
+        'notes': notes
+    }
+    return render(request, 'RoomManager/dashboard.html', context)
+
+def separate_temperature_parts(temperature):
+    temperature_str = str(temperature)
+    if '.' in temperature_str:
+        integer_part, decimal_part = temperature_str.split('.')
+    else:
+        integer_part = temperature_str
+        decimal_part = '0'
+    return {
+        'integer_part': integer_part,
+        'decimal_part': decimal_part,
+    }
+
+def cityview(request):
+    user = request.user
+    notes = Note.objects.filter(user=user)
+    city = request.POST.get('city')  # Retrieve the city name from the form
+    print(city)
+    if city:
+        url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&APPID=f9c2f0f368afcfb53b6a73a394cfef82&units=metric'
+        response = requests.get(url)
+        data = json.loads(response.text)
+        if 'main' in data:
+            data['main']['temp_parts'] = separate_temperature_parts(data['main']['temp'])
+            data['main']['temp_min_parts'] = separate_temperature_parts(data['main']['temp_min'])
+            data['main']['temp_max_parts'] = separate_temperature_parts(data['main']['temp_max'])
+            data['main']['feels_like_parts'] = separate_temperature_parts(data['main']['feels_like'])
+        else:
+            data = None
+        print(data)
+    else:
+        data = None
+    context = {
+        'data': data,
+        'notes': notes
+    }
+    return render(request, 'RoomManager/dashboard.html', context)
+
+def create_note_request(request):
+    if request.method == "POST":
+        form = NoteForm(request.POST)
+        if form.is_valid():
+            note = form.save(commit=False)  # Create Note object but don't save it yet
+            note.user = request.user  # Set the user field to the currently logged-in user
+            note.timestamp = timezone.now()  # Set the timestamp to the current date and time
+            note.save()  # Save the note
+            messages.success(request, "Note saved")
+            return redirect("dashboard")
+        messages.error(request, "Unsuccessful note saving: invalid information")
+    form = NoteForm()
+    return render(request, "RoomManager/create_note.html", {"note_form": form})
+
+def edit_note(request, note_id):
+    user = request.user
+    note = get_object_or_404(Note, pk=note_id, user=user)
+    if request.method == 'POST':
+        form = NoteForm(request.POST, instance=note)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')
+    else:
+        form = NoteForm(instance=note)
+    return render(request, 'RoomManager/edit_note.html', {'note_form': form, 'note_id': note_id})
+
+def delete_note(request, note_id):
+    note = get_object_or_404(Note, pk=note_id, user=request.user)
+    if request.method == 'POST':
+        note.delete()
+        return redirect('dashboard')
+    else:
+        form = NoteForm(instance=note)
+    return render(request, 'RoomManager/edit_note.html', {'note_form': form, 'note_id': note_id})
