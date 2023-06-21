@@ -3,12 +3,191 @@
 {% block content %}
     <style>
         .content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 92vh;
+            display: block;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            margin: 20px;
+        }
+
+        .welcome_bar {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .welcome_bar h1 {
+            margin-left: 10px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            font-size: 30px;
+            color: #5e72e4;
+        }
+
+        .logout {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        .logout h1 {
+            margin-right: 10px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            font-size: 22px;
+            color: #5e72e4;
+        }
+
+        button[type="submit"] {
+            background-color: #5e72e4;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 20px;
+            padding: 15px 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #825ee4;
+        }
+
+        .weather-content {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .weather-info {
+            display: flex;
+            text-align: center;
+            flex-direction: column;
+            padding: 30px;
+            margin-right: 50px;
+            background-color: #ffffff;
+            color: #5e72e4;
+            border-radius: 20px;
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .weather-info h2 {
+            font-size: 38px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 15px;
+            margin-top: 0px;
+        }
+
+        .weather-info ul {
+            list-style: none;
+            align-items: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .weather-info li {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .temp_min, .temperature, .temp_max {
+            flex-basis: 30%;
+        }
+
+        .temperature {
+            font-size: 46px;
+        }
+
+        .temp_min, .temp_max {
+            margin: 0px 20px;
+            opacity: 0.3;
+        }
+
+        .feels {
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .weather_data {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .weather_data .left {
+            margin-right: 50px;
+        }
+
+        .city-input {
+            margin-bottom: -20px;
+        }
+
+        .city-input input {
+            border: 1px solid #5e72e4;
+            border-radius: 5px;
+            font-size: 16px;
+            padding: 5px 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
     </style>
-    <h1>Dashboard</h1>
-    <p>This is the dashboard page.</p>
+    <div class="header">
+        <form method="POST" action="">
+          <div class="welcome_bar">
+            <h1 id="user">{{ user.get_username }}'s dashboard</h1>
+            <div class="logout">
+              <h1>Want to change ?</h1>
+              {% csrf_token %}
+              <button type="submit">Customize</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    <div class="weather-content">
+        <div class="weather-info">
+            <h2>{{ data.name }}</h2>
+            <ul>
+                <li>
+                    <div class="temp_min">{{ data.main.temp_min_parts.integer_part }}°C</div>
+                    <div class="temperature">{{ data.main.temp_parts.integer_part }}°C</div>
+                    <div class="temp_max">{{ data.main.temp_max_parts.integer_part }}°C</div>
+                </li>
+                <li class="feels">feels like {{ data.main.feels_like_parts.integer_part }}°C</li>
+                <li>
+                    <div class="weather_data">
+                        <div class="left">&#128166; {{ data.main.humidity }}%</div>
+                        <div class="right">{{ data.weather.0.main }} &#127782;&#65039; </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="weather_data">
+                        <div class="left">&#128168; {{ data.wind.speed }}km/h</div>
+                        <div class="right">{{ data.clouds.all }}% &#9729;&#65039;</div>
+                    </div>
+                </li>
+            </ul>
+            <div class="city-input">
+                <form method="POST" action="{% url 'cityview' %}">
+                    {% csrf_token %}
+                    <input type="text" name="city" placeholder="London, Tokyo..."></input>
+                </form>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -6,6 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from datetime import datetime, timedelta
+import json, requests
 
 def home(request):
     rooms = Room.objects.all()
@@ -61,9 +62,6 @@ def create_room_request(request):
 	form = RoomForm()
 	return render(request=request, template_name="RoomManager/create_room.html", context={"room_form":form})
 
-def dashboard(request):
-    return render(request, 'RoomManager/dashboard.html')
-
 def profile(request):
     user = request.user
     return render(request, 'RoomManager/profile.html',{'user':user})
@@ -100,7 +98,6 @@ def create_event(request):
         'message': 'Done',
     }
     return JsonResponse(response_data)
-
 
 def room_booking(request):
     rooms = Room.objects.all()
@@ -155,9 +152,6 @@ def create_event_request(request):
         EventRequest.objects.create(from_profile=request.user, to_event=event)
         return JsonResponse({'success':True})   
 
-
-
-
 def user_role_reset(request):
     if request.user.is_superuser:
         profiles = UserProfile.objects.all()
@@ -194,3 +188,48 @@ def update_user_info(request):
         pass
     
     return redirect("profile")
+
+def dashboard(request):
+    url = f'http://api.openweathermap.org/data/2.5/weather?q=Paris&APPID=f9c2f0f368afcfb53b6a73a394cfef82&units=metric'
+    response = requests.get(url)
+    data = json.loads(response.text)
+    if 'main' in data:
+        data['main']['temp_parts'] = separate_temperature_parts(data['main']['temp'])
+        data['main']['temp_min_parts'] = separate_temperature_parts(data['main']['temp_min'])
+        data['main']['temp_max_parts'] = separate_temperature_parts(data['main']['temp_max'])
+        data['main']['feels_like_parts'] = separate_temperature_parts(data['main']['feels_like'])
+    else:
+        data = None
+    print(data)
+    return render(request, 'RoomManager/dashboard.html', {'data': data})
+
+def separate_temperature_parts(temperature):
+    temperature_str = str(temperature)
+    if '.' in temperature_str:
+        integer_part, decimal_part = temperature_str.split('.')
+    else:
+        integer_part = temperature_str
+        decimal_part = '0'
+    return {
+        'integer_part': integer_part,
+        'decimal_part': decimal_part,
+    }
+
+def cityview(request):
+    city = request.POST.get('city')  # Retrieve the city name from the form
+    print(city)
+    if city:
+        url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&APPID=f9c2f0f368afcfb53b6a73a394cfef82&units=metric'
+        response = requests.get(url)
+        data = json.loads(response.text)
+        if 'main' in data:
+            data['main']['temp_parts'] = separate_temperature_parts(data['main']['temp'])
+            data['main']['temp_min_parts'] = separate_temperature_parts(data['main']['temp_min'])
+            data['main']['temp_max_parts'] = separate_temperature_parts(data['main']['temp_max'])
+            data['main']['feels_like_parts'] = separate_temperature_parts(data['main']['feels_like'])
+        else:
+            data = None
+        print(data)
+    else:
+        data = None
+    return render(request, 'RoomManager/dashboard.html', {'data': data})

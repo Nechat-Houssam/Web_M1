@@ -17,5 +17,6 @@ urlpatterns = [
     path('delete_event/',views.delete_event, name='delete_event'),
     path('create_event_request/', views.create_event_request, name='create_event_request'),
     path('user_role_reset/', views.user_role_reset, name='user_role_reset'),
-    path('update_user_info/', views.update_user_info, name='update_user_info')
+    path('update_user_info/', views.update_user_info, name='update_user_info'),
+    path('cityview/', views.cityview, name='cityview')
 ]
