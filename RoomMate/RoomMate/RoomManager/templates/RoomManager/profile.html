@@ -173,7 +173,7 @@
     Account information here
   </div>
   <div class="requests">
-    Requests here
+
   </div>
   <div class="invitations">
     Invitations here
@@ -205,6 +205,30 @@
 <script>
   $(document).ready(function() {
     fetchEvents();
+
+    $.ajax({
+      url: '/path/to/user_requests/', // Remplacez par l'URL de votre vue qui renvoie les requêtes
+      type: 'GET',
+      success: function(response) {
+        var requests = response.requests; // Supposons que la réponse contient un objet 'requests' avec les requêtes
+
+        var html = '';
+        for (var i = 0; i < requests.length; i++) {
+          var request = requests[i];
+          html += '<li>';
+          html += '<p>From: ' + request.from_profile + '</p>';
+          html += '<p>Event: ' + request.to_event + '</p>';
+          html += '<button class="accept-btn">Accept</button>';
+          html += '<button class="reject-btn">Reject</button>';
+          html += '</li>';
+        }
+
+        $('.requests').html(html);
+      },
+  });
+
+
+
 
     function fetchEvents() {
       var userId = '{{ user.username }}';
