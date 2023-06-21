@@ -205,14 +205,10 @@
   </div>
 </div>
 
-
-{% if user.profile.room_set.all %}
   <div class="calendar_container" id="calendar"></div>
-{% else %}
   <form method="post">
     <h1>No rooms associated with the user.</h1>
   </form>
-{% endif %}
 
 <div class="staff">
   {% if user.is_superuser or user.profile.role == 'M' %}
@@ -272,7 +268,13 @@
           creator: userId
         },
         success: function(response) {
+          console.log(response);
+          if (response.events.length > 0) {
           renderCalendar(response.events);
+          }
+          else{
+            $('#calendar').html('<form method="post"><h1>No rooms associated with the user.</h1></form>')
+          }
         },
         error: function(xhr, status, error) {
           console.error(error);
@@ -282,6 +284,7 @@
 
     function renderCalendar(events) {
       console.log(events);
+      console.log('pour de vrai ?');
       var calendar = $('#calendar').fullCalendar({
         header: {
           left: 'prev,next today',
