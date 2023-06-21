@@ -61,8 +61,8 @@ def create_room_request(request):
 	form = RoomForm()
 	return render(request=request, template_name="RoomManager/create_room.html", context={"room_form":form})
 
-def settings(request):
-    return render(request, 'RoomManager/settings.html')
+def dashboard(request):
+    return render(request, 'RoomManager/dashboard.html')
 
 def profile(request):
     user = request.user
