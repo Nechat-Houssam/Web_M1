@@ -296,3 +296,19 @@ def user_requests(request):
 
     json_data = json.dumps(serialized_requests)
     return JsonResponse({'requests': json_data})
+
+def answer_requests(request):
+    answer = request.POST.get('action')
+    from_profile = request.POST.get('from_profile')
+    to_event_room = request.POST.get('to_event_room')
+    to_event_start = request.POST.get('to_event_start')
+    room = Room.objects.filter(name = to_event_room).first()
+    user = User.objects.filter(username = from_profile).first()
+    event = Event.objects.get(room=room, start_time=to_event_start)
+    
+    if answer=='accept':
+        event.invited.add(user)
+    event_request = EventRequest.objects.get(from_profile=user, to_event=event)
+    event_request.status = True
+    event_request.save()
+    return JsonResponse({'success':False})

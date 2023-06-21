@@ -274,14 +274,40 @@
           var dateTime = new Date(dateTimeString);
           var formattedDateTime = dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) + ' ' + dateTime.toLocaleDateString();
           html += '<p>Event Start: ' + formattedDateTime + '</p>';
-          html += '<button class="accept-btn">Accept</button>';
-          html += '<button class="reject-btn">Reject</button>';
+          html += '<button class="action-btn" data-from-profile="' + request.from_profile_username + '" data-to-event-room="' + request.to_event_room + '" data-to-event-start="' + request.to_event_start + '" data-action="accept">Accept</button>';
+          html += '<button class="action-btn" data-from-profile="' + request.from_profile_username + '" data-to-event-room="' + request.to_event_room + '" data-to-event-start="' + request.to_event_start + '" data-action="reject">Reject</button>';
         }
 
         $('.requests').html(html);
+
+        $('.action-btn').on('click', function () {
+          var fromProfile = $(this).data('from-profile');
+          var toEventRoom = $(this).data('to-event-room');
+          var toEventStart = $(this).data('to-event-start');
+          var action = $(this).data('action');
+          handleRequestAction(fromProfile, toEventRoom, toEventStart, action);
+        });
       },
     });
 
+    function handleRequestAction(fromProfile, toEventRoom, toEventStart, action) {
+      var csrftoken = getCookie('csrftoken');
+      $.ajax({
+        url: '{% url "answer_requests" %}',
+        type: 'POST',
+        data: {
+          from_profile: fromProfile,
+          to_event_room: toEventRoom,
+          to_event_start: toEventStart,
+          action: action,
+          csrfmiddlewaretoken: csrftoken
+        },
+        success: function (response) {
+          alert("Your response has been taken into account.")
+          location.reload();
+        },
+      });
+    }
 
 
 
@@ -292,7 +318,7 @@
         url: '{% url "fetch_events_profile" %}',
         type: 'GET',
         data: {
-          creator: userId
+          creator: userId,
         },
         success: function (response) {
           console.log(response);
