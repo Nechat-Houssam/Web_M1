@@ -212,9 +212,7 @@
 </div>
 
   <div class="calendar_container" id="calendar"></div>
-  <form method="post">
-    <h1>No rooms associated with the user.</h1>
-  </form>
+
 
 <div class="staff">
   {% if user.is_superuser or user.profile.role == 'M' %}
@@ -241,7 +239,7 @@
     fetchEvents();
 
     $.ajax({
-      url: 'fetch_events_profile', // Remplacez par l'URL de votre vue qui renvoie les requêtes
+      url: '{% url "fetch_events_profile" %}', // Remplacez par l'URL de votre vue qui renvoie les requêtes
       type: 'GET',
       success: function(response) {
         var requests = response.requests;
