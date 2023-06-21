@@ -42,6 +42,7 @@ class EventInvite(models.Model):
     from_event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="invite_from_event", null=True)
     to_profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name="invite_to_profile", null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(default=0)
 
     def __str__(self):
         return f"Invite from {self.from_event} to {self.to_profile}"
@@ -50,6 +51,7 @@ class EventRequest(models.Model):
     from_profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name="request_from_profile", null=True)
     to_event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="request_to_event", null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(default=0)
 
     def __str__(self):
         return f"Request from {self.from_profile} to {self.to_event}"

@@ -6,7 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from datetime import datetime, timedelta
-from django.core import serializers
+from django.db.models import Q
 import json, requests
 from django.utils import timezone
 
@@ -120,7 +120,7 @@ def fetch_events(request):
 
 def fetch_events_profile(request):
     user = request.user
-    events = Event.objects.filter(creator=user)
+    events = Event.objects.filter(Q(creator=user) | Q(invited__in=[user]))
     event_data = []
     for event in events:
         event_data.append({
@@ -143,14 +143,9 @@ def create_event_request(request):
     event = get_object_or_404(Event, room=room, start_time=start_time)
 
     event_request_exists = EventRequest.objects.filter(to_event= event, from_profile= request.user).exists()
-    print(request.user)
-    print(event)
-    print(event_request_exists)
     if event_request_exists: 
-        print("oui")
         return JsonResponse({'already':True})
     else :
-        print("non")
         EventRequest.objects.create(from_profile=request.user, to_event=event)
         return JsonResponse({'success':True})   
 
@@ -287,7 +282,7 @@ def delete_note(request, note_id):
 
 def user_requests(request):
     user_events = Event.objects.filter(creator=request.user)
-    user_requests = EventRequest.objects.filter(to_event__in=user_events)
+    user_requests = EventRequest.objects.filter(to_event__in=user_events, status=0)
 
     serialized_requests = []
     for request in user_requests:
