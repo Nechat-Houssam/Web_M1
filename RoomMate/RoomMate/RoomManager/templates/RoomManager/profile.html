@@ -76,11 +76,20 @@
   }
 
   .account {
-    width: 30%;
+    width: 25%;
+  }
+
+  .account form {
+    box-shadow: none;
+    align-items: center;
+  }
+
+  .account h1 {
+    margin-top: 5px;
   }
 
   .requests, .invitations {
-    width: 38%;
+    width: 35%;
   }
 
   form {
@@ -186,8 +195,8 @@
 
 <div class="perso">
   <div class="account">
-    <h1>Account Information</h1>
     <form method="post" action="{% url 'update_user_info' %}">
+      <h1>Account information</h1>
       {% csrf_token %}
       <label for="username">Username:</label>
       <input type="text" id="username" name="username" value="{{ user.username }}">

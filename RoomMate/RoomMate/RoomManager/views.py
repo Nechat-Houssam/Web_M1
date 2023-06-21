@@ -69,7 +69,8 @@ def profile(request):
     return render(request, 'RoomManager/profile.html',{'user':user})
 
 def oursite(request):
-    return render(request, 'RoomManager/oursite.html')
+    rooms = Room.objects.all()
+    return render(request, 'RoomManager/oursite.html', {'rooms': rooms})
 
 def create_event(request):
     room_name = request.POST.get('room')
@@ -187,7 +188,7 @@ def update_user_info(request):
             user.username = new_username
             
         user.save()
-        messages.info(request, 'Password updated successfully.')
+        messages.info(request, 'Account information updated successfully.')
         updated_user = authenticate(username=user.username, password=form.cleaned_data['password'])
         login(request, updated_user)
 
