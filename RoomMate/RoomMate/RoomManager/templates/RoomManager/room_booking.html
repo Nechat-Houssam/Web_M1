@@ -166,6 +166,11 @@
                     maxTime: '18:00:00',
 
                     dayClick: function (date, jsEvent, view) {
+
+                        if (date.isBefore(moment(), 'day')) {
+                            alert("Selected date is in the past. Please choose a future date.");
+                            return;
+                        }
                         var day = date.format('YYYY-MM-DD');
                         var start = date.format('HH:mm');
                         var end = date.clone().add(30, 'minutes').format('HH:mm');
@@ -206,7 +211,7 @@
                         var start = calEvent.start._i;
                         var room = $('#room option:selected').text();
                         var csrftoken = getCookie('csrftoken');
-                        var confirmation = confirm("Would you like to send a request to the author of this reservation to join them?");
+                        var confirmation = confirm("The selected time slots are not available. Would you like to send a request to the author of this reservation to join them?");
                         var url = '{% url "create_event_request" %}';
                         if (confirmation) {
                             $.ajax({
