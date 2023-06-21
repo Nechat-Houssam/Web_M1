@@ -1,5 +1,5 @@
 from django import forms
-from .models import Room, Event
+from .models import Room, Event, Note
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -38,3 +38,8 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['date', 'start_time', 'end_time', 'room']
+
+class NoteForm(forms.ModelForm):
+    class Meta:
+        model = Note
+        fields = ('title', 'content')

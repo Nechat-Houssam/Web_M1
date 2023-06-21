@@ -18,5 +18,8 @@ urlpatterns = [
     path('create_event_request/', views.create_event_request, name='create_event_request'),
     path('user_role_reset/', views.user_role_reset, name='user_role_reset'),
     path('update_user_info/', views.update_user_info, name='update_user_info'),
-    path('cityview/', views.cityview, name='cityview')
+    path('cityview/', views.cityview, name='cityview'),
+    path('create_note/', views.create_note_request, name='create_note'),
+    path('edit_note/<int:note_id>/', views.edit_note, name='edit_note'),
+    path('delete_note/<int:note_id>/', views.delete_note, name='delete_note'),
 ]

@@ -18,6 +18,13 @@
             margin: 20px;
         }
 
+        .widgets {
+            display: flex;
+            flex-direction: row;
+            align-content: stretch;
+            margin: 0px 20px 20px 20px;
+        }
+
         .welcome_bar {
             display: flex;
             flex-direction: row;
@@ -64,19 +71,19 @@
             background-color: #825ee4;
         }
 
-        .weather-content {
+        .weather-content, .notes {
             display: flex;
             flex-direction: row;
             justify-content: center;
             align-items: center;
         }
 
-        .weather-info {
+        .weather-info, .notes {
             display: flex;
             text-align: center;
             flex-direction: column;
             padding: 30px;
-            margin-right: 50px;
+            margin-right: 30px;
             background-color: #ffffff;
             color: #5e72e4;
             border-radius: 20px;
@@ -145,6 +152,30 @@
             width: 100%;
             box-sizing: border-box;
         }
+
+        .notes {
+            flex-grow: 1;
+            margin-right: 0px;
+        }
+
+        .notes ul {
+            padding: 0px;
+            width: 100%
+        }
+
+        .note {
+            display: flex;
+            flex-direction: row;
+            align-items: baseline;
+        }
+
+        .note_title, .note_content {
+            margin: 0px 10px 0px 0px;
+        }
+        
+        .note_edit {
+            margin-left: auto;
+        }
     </style>
     <div class="header">
         <form method="POST" action="">
@@ -157,37 +188,55 @@
             </div>
           </div>
         </form>
-      </div>
+    </div>
 
-    <div class="weather-content">
-        <div class="weather-info">
-            <h2>{{ data.name }}</h2>
-            <ul>
-                <li>
-                    <div class="temp_min">{{ data.main.temp_min_parts.integer_part }}°C</div>
-                    <div class="temperature">{{ data.main.temp_parts.integer_part }}°C</div>
-                    <div class="temp_max">{{ data.main.temp_max_parts.integer_part }}°C</div>
-                </li>
-                <li class="feels">feels like {{ data.main.feels_like_parts.integer_part }}°C</li>
-                <li>
-                    <div class="weather_data">
-                        <div class="left">&#128166; {{ data.main.humidity }}%</div>
-                        <div class="right">{{ data.weather.0.main }} &#127782;&#65039; </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="weather_data">
-                        <div class="left">&#128168; {{ data.wind.speed }}km/h</div>
-                        <div class="right">{{ data.clouds.all }}% &#9729;&#65039;</div>
-                    </div>
-                </li>
-            </ul>
-            <div class="city-input">
-                <form method="POST" action="{% url 'cityview' %}">
-                    {% csrf_token %}
-                    <input type="text" name="city" placeholder="London, Tokyo..."></input>
-                </form>
+    <div class="widgets">
+        <div class="weather-content">
+            <div class="weather-info">
+                <h2>{{ data.name }}</h2>
+                <ul>
+                    <li>
+                        <div class="temp_min">{{ data.main.temp_min_parts.integer_part }}°C</div>
+                        <div class="temperature">{{ data.main.temp_parts.integer_part }}°C</div>
+                        <div class="temp_max">{{ data.main.temp_max_parts.integer_part }}°C</div>
+                    </li>
+                    <li class="feels">feels like {{ data.main.feels_like_parts.integer_part }}°C</li>
+                    <li>
+                        <div class="weather_data">
+                            <div class="left">&#128166; {{ data.main.humidity }}%</div>
+                            <div class="right">{{ data.weather.0.main }} &#127782;&#65039; </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="weather_data">
+                            <div class="left">&#128168; {{ data.wind.speed }}km/h</div>
+                            <div class="right">{{ data.clouds.all }}% &#9729;&#65039;</div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="city-input">
+                    <form method="POST" action="{% url 'cityview' %}">
+                        {% csrf_token %}
+                        <input type="text" name="city" placeholder="London, Tokyo..."></input>
+                    </form>
+                </div>
             </div>
+        </div>
+
+        <div class="notes">
+            <ul>
+                {% for note in notes %}
+                <li class="note">
+                    <h3 class="note_title">{{ note.title }}</h3>
+                    <p class="note_content">{{ note.content }}</p>
+                    <div class="note_edit"><a href="{% url 'edit_note' note.id %}">Edit</a></div>
+                </li>
+            {% endfor %}
+            </ul>
+            <form method="get" action="{% url 'create_note' %}">
+                {% csrf_token %}
+                <button type="submit">New note</button>
+            </form>
         </div>
     </div>
 {% endblock %}
