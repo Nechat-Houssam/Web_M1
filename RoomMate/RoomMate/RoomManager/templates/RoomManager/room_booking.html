@@ -223,13 +223,18 @@
                                     csrfmiddlewaretoken: csrftoken
                                 },
                                 success: function (response) {
-                                    alert("Request sent successfully!");
+                                    if (response.already) {
+                                        alert("You have already sent a join request for this event.");
+                                    } else {
+                                        alert("Request sent successfully!");
+                                    }
                                 }
                             });
                         }
                     },
                 });
             }
+            
 
             function getCookie(name) {
                 var cookieValue = null;

@@ -72,37 +72,35 @@ def oursite(request):
     return render(request, 'RoomManager/oursite.html')
 
 def create_event(request):
-    if request.method == 'POST':
-        room_name = request.POST.get('room')
-        day = request.POST.get('date')
-        start_time = request.POST.get('start_time')
-        end_time = request.POST.get('end_time')
+    room_name = request.POST.get('room')
+    day = request.POST.get('date')
+    start_time = request.POST.get('start_time')
+    end_time = request.POST.get('end_time')
 
-        st = datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S.%fZ')
-        et = datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%S.%fZ')
-        # Ajout de 2 heures à l'objet datetime
-        new_st = st + timedelta(hours=2)
-        new_et = et + timedelta(hours=2)
-        print(new_st)
-        print(new_et)
+    st = datetime.strptime(start_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    et = datetime.strptime(end_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    
+    # Ajout de 2 heures à l'objet datetime
+    new_st = st + timedelta(hours=2)
+    new_et = et + timedelta(hours=2)
+
         
-        room = get_object_or_404(Room, name=room_name)
+    room = get_object_or_404(Room, name=room_name)
 
-        event = Event(
-            creator=request.user, 
-            room=room,
-            date=day,
-            start_time=new_st,
-            end_time=new_et
-        )
+    event = Event(
+        creator=request.user, 
+        room=room,
+        date=day,
+        start_time=new_st,
+        end_time=new_et
+    )
 
-        event.save()
-        response_data = {
-            'message': 'Événement créé avec succès',
-        }
-        return JsonResponse(response_data)
-    else:
-        pass
+    event.save()
+    response_data = {
+        'message': 'Done',
+    }
+    return JsonResponse(response_data)
+
 
 def room_booking(request):
     rooms = Room.objects.all()
@@ -139,13 +137,26 @@ def delete_event(request):
     return JsonResponse({'success': True})
 
 def create_event_request(request):
-    print("la vue marche")
+
     room_name = request.POST.get('room')
     room = get_object_or_404(Room, name=room_name)
     start_time = request.POST.get('start')
     event = get_object_or_404(Event, room=room, start_time=start_time)
-    EventRequest.objects.create(from_profile=request.user, to_event=event)
-    return JsonResponse({'success':True})   
+
+    event_request_exists = EventRequest.objects.filter(to_event= event, from_profile= request.user).exists()
+    print(request.user)
+    print(event)
+    print(event_request_exists)
+    if event_request_exists: 
+        print("oui")
+        return JsonResponse({'already':True})
+    else :
+        print("non")
+        EventRequest.objects.create(from_profile=request.user, to_event=event)
+        return JsonResponse({'success':True})   
+
+
+
 
 def user_role_reset(request):
     if request.user.is_superuser:
