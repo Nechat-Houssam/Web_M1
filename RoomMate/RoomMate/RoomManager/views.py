@@ -1,4 +1,4 @@
-from .forms import NewUserForm, RoomForm, NoteForm
+from .forms import NewUserForm, RoomForm, NoteForm, UpdateUserInfoForm
 from .models import User, UserProfile, Room, Event, EventRequest, EventInvite, Note
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -171,33 +171,27 @@ def user_role_reset(request):
 
     return redirect("home")
 
-@login_required
 def update_user_info(request):
-    if request.method == 'POST':
-        form = UpdateUserInfoForm(request.POST)
-        if form.is_valid():
-            user = request.user
-            user.email = form.cleaned_data['email']
-            user.set_password(form.cleaned_data['password'])
+    form = UpdateUserInfoForm(request.POST)
+    if form.is_valid():
+        user = request.user
+        user.email = form.cleaned_data['email']
+        user.set_password(form.cleaned_data['password'])
+        
+        new_username = form.cleaned_data['username']
+        if new_username != user.username:
+            if User.objects.filter(username=new_username).exists():
+                form.add_error('username', 'Username is already taken.')
+                messages.error(request,"Username already taken")
+                return redirect("profile")  
+            user.username = new_username
             
-            new_username = form.cleaned_data['username']
-            if new_username != user.username:
-                if User.objects.filter(username=new_username).exists():
-                    form.add_error('username', 'Username is already taken.')
-                    messages.error(request,"Username already taken")
-                    return redirect("profile")  
-                user.username = new_username
-            
-            user.save()
-            
-            updated_user = authenticate(username=user.username, password=form.cleaned_data['password'])
-            login(request, updated_user)
-            
-            return redirect("profile")  
-    else:
-        pass
-    
-    return redirect("home")
+        user.save()
+        messages.info(request, 'Password updated successfully.')
+        updated_user = authenticate(username=user.username, password=form.cleaned_data['password'])
+        login(request, updated_user)
+
+        return redirect("profile")  
 
 def dashboard(request):
     user = request.user
