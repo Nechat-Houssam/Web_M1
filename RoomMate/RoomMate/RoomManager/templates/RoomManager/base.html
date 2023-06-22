@@ -16,7 +16,7 @@
             {% endif %}
             <li><a href="{% url 'home' %}">Home</a></li>
             {% if user.is_authenticated %}
-            <li><a href="{% url 'about' %}">About</a></li>
+            <li><a href="{% url 'about' %}">3D Model</a></li>
             <li><a href="{% url 'room_booking' %}">Booking</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
             <li><a href="{% url 'profile' %}">{{ user.get_username }}</a></li>

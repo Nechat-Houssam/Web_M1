@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-# Create your models here.
 
 class UserProfile(models.Model):
     ROLES = [
@@ -37,15 +36,6 @@ class Event(models.Model):
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-
-class EventInvite(models.Model):
-    from_event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="invite_from_event", null=True)
-    to_profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name="invite_to_profile", null=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    status = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Invite from {self.from_event} to {self.to_profile}"
     
 class EventRequest(models.Model):
     from_profile = models.ForeignKey(User, on_delete=models.CASCADE, related_name="request_from_profile", null=True)

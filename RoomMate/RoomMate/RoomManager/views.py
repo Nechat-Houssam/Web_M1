@@ -1,5 +1,5 @@
 from .forms import NewUserForm, RoomForm, NoteForm, UpdateUserInfoForm
-from .models import User, UserProfile, Room, Event, EventRequest, EventInvite, Note
+from .models import User, UserProfile, Room, Event, EventRequest, Note
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
@@ -24,7 +24,7 @@ def login_request(request):
 			if user is not None:
 				login(request, user)
 				messages.info(request, f"You are now logged in as {username}")
-				return redirect("home")
+				return redirect("profile")
 			else:
 				messages.error(request,"Invalid username or password")
 		else:

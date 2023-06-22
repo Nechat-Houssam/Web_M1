@@ -70,7 +70,6 @@
   }
 
   .account,
-  .requests-container,
   .invitations {
     display: flex;
     flex-direction: column;
@@ -92,9 +91,13 @@
     margin-top: 5px;
   }
 
-  .requests-container,
-  .invitations {
+  .requests-container {
     width: 35%;
+    background-color: #5e72e4;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
   }
 
   form {
@@ -183,6 +186,28 @@
   .requests {
     margin-left: 20px;
   }
+
+  .requests-container h1 {
+    color: white;
+  }
+
+  .fc-event {
+    background-color: #5e72e4;
+    color: #ffffff;
+  }
+
+  .fc-event:hover {
+    background-color: #5e72e4;
+    color: #ffffff;
+  }
+
+  .fc-event-title {
+    color: #ffffff;
+  }
+
+  .fc-event-container {
+    border-color: #5e72e4;
+  }
 </style>
 
 <div class="header">
@@ -222,13 +247,6 @@
     <div class="requests">
 
     </div>
-  </div>
-
-
-
-
-  <div class="invitations">
-    Invitations here
   </div>
 </div>
 
@@ -272,6 +290,7 @@
           html += '<p>Event Room: ' + request.to_event_room + '</p>';
           var dateTimeString = request.to_event_start;
           var dateTime = new Date(dateTimeString);
+          dateTime.setHours(dateTime.getHours() - 2);
           var formattedDateTime = dateTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) + ' ' + dateTime.toLocaleDateString();
           html += '<p>Event Start: ' + formattedDateTime + '</p>';
           html += '<button class="action-btn" data-from-profile="' + request.from_profile_username + '" data-to-event-room="' + request.to_event_room + '" data-to-event-start="' + request.to_event_start + '" data-action="accept">Accept</button>';
@@ -364,7 +383,7 @@
         }
       });
       var fcCenterElement = $(".fc-toolbar .fc-center");
-      fcCenterElement.prepend("<h2>Content for title</h2>");
+      fcCenterElement.prepend("<h2>Your events for : </h2>");
     }
 
     function deleteEvent(start_time) {
