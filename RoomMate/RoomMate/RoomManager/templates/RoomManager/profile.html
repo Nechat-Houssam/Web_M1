@@ -133,7 +133,20 @@
     transition: background-color 0.3s ease;
   }
 
-  button[type="submit"]:hover {
+  button {
+    background-color: white;
+    border: none;
+    color: #5e72e4;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 20px;
+    padding: 15px 20px;
+    transition: background-color 0.3s ease;
+    margin:10px;
+  }
+
+  button:hover {
     background-color: #825ee4;
   }
 
@@ -208,6 +221,10 @@
   .fc-event-container {
     border-color: #5e72e4;
   }
+
+  #printButton{
+    align-items: center;
+  }
 </style>
 
 <div class="header">
@@ -251,7 +268,7 @@
 </div>
 
 <div class="calendar_container" id="calendar"></div>
-
+<button id="printButton">Print your calendar</button>
 
 <div class="staff">
   {% if user.is_superuser or user.profile.role == 'M' %}
@@ -403,7 +420,10 @@
       });
     }
 
-
+    var printButton = document.getElementById('printButton');
+    printButton.addEventListener('click', function () {
+      window.print();
+    });
 
 
     function getCookie(name) {
